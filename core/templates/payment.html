@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5" style="margin-top: 80px;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3>Processing Payment...</h3>
+                    <p>Please wait while we redirect you to the payment gateway.</p>
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="razorpay-form" action="{% url 'payment_success' %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+    <input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
+    <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+</form>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+    "key": "{{ razorpay_key }}",
+    "amount": "{{ amount }}",
+    "currency": "INR",
+    "name": "Evergreen Villages Trust",
+    "description": "Donation",
+    "order_id": "{{ order_id }}",
+    "handler": function (response){
+        document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+        document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+        document.getElementById('razorpay_signature').value = response.razorpay_signature;
+        document.getElementById('razorpay-form').submit();
+    },
+    "modal": {
+        "ondismiss": function(){
+            // Handle payment cancellation
+            window.location.href = "{% url 'payment_cancelled' %}?order_id={{ order_id }}";
+        }
+    },
+    "theme": {
+        "color": "#1b5e20"
+    }
+};
+
+var rzp1 = new Razorpay(options);
+rzp1.open();
+
+rzp1.on('payment.failed', function (response){
+    alert('Payment failed. Please try again.');
+    window.location.href = "{% url 'donate' %}";
+});
+</script>
+{% endblock %}

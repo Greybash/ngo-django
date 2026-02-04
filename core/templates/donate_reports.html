@@ -1,0 +1,361 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-5" style="margin-top: 90px;">
+    <div class="admin-header" data-aos="fade-down">
+        <div>
+            <h1 class="admin-title">Donation Reports</h1>
+            <p class="admin-subtitle">Filter and export donation data</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-admin-secondary">
+            <i class="bi bi-arrow-left me-2"></i>
+            Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="filter-card" data-aos="fade-up">
+        <div class="filter-header">
+            <i class="bi bi-funnel-fill me-2"></i>
+            <h5>Filter Donations</h5>
+        </div>
+        <form method="get" class="filter-form">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Start Date</label>
+                    <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">End Date</label>
+                    <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-filter d-block w-100">
+                        <i class="bi bi-search me-2"></i>
+                        Apply Filter
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Total Display -->
+    <div class="total-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="total-icon">
+            <i class="bi bi-cash-stack"></i>
+        </div>
+        <div class="total-content">
+            <h5>Total Donations</h5>
+            <h2>₹{{ total|floatformat:2 }}</h2>
+        </div>
+        <div class="total-badge">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            All Time
+        </div>
+    </div>
+
+    <!-- Donations Table -->
+    <div class="data-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="card-header-custom">
+            <h5><i class="bi bi-table me-2"></i>Donation Records</h5>
+        </div>
+        <div class="card-body-custom">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Donor Name</th>
+                            <th>Email</th>
+                            <th>Amount</th>
+                            <th>Cause</th>
+                            <th>Payment ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for donation in donations %}
+                        <tr>
+                            <td>{{ donation.created_at|date:"M d, Y H:i" }}</td>
+                            <td class="fw-semibold">{{ donation.first_name }} {{ donation.last_name }}</td>
+                            <td>{{ donation.email }}</td>
+                            <td class="text-success fw-bold">₹{{ donation.amount }}</td>
+                            <td>
+                                <span class="cause-badge">{{ donation.get_cause_display }}</span>
+                            </td>
+                            <td>
+                                <small class="text-muted font-monospace">{{ donation.payment_id }}</small>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Admin Header */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.admin-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary-green);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.admin-subtitle {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.btn-admin-secondary {
+    background: white;
+    color: var(--primary-green);
+    border: 2px solid var(--primary-green);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-admin-secondary:hover {
+    background: var(--primary-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
+}
+
+/* Filter Card */
+.filter-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid var(--border-color);
+}
+
+.filter-header {
+    display: flex;
+    align-items: center;
+    color: var(--primary-green);
+    margin-bottom: 25px;
+}
+
+.filter-header h5 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.filter-form .form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.filter-form .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 12px 16px;
+    transition: all 0.3s ease;
+}
+
+.filter-form .form-control:focus {
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 0.2rem rgba(27, 94, 32, 0.1);
+}
+
+.btn-filter {
+    background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-filter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
+}
+
+/* Total Card */
+.total-card {
+    background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+    border-radius: 20px;
+    padding: 35px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(27, 94, 32, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.total-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse 15s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.1); opacity: 0.5; }
+}
+
+.total-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.total-content {
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.total-content h5 {
+    margin: 0 0 10px 0;
+    opacity: 0.9;
+    font-weight: 600;
+}
+
+.total-content h2 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.total-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* Data Card */
+.data-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid var(--border-color);
+}
+
+.card-header-custom {
+    background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+    color: white;
+    padding: 20px 25px;
+}
+
+.card-header-custom h5 {
+    margin: 0;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+.card-body-custom {
+    padding: 25px;
+}
+
+/* Table Styles */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background: rgba(27, 94, 32, 0.05);
+    color: var(--primary-green);
+    font-weight: 700;
+    border-bottom: 2px solid var(--accent-light);
+    padding: 15px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background: rgba(27, 94, 32, 0.03);
+}
+
+.table tbody td {
+    padding: 15px;
+    vertical-align: middle;
+}
+
+.cause-badge {
+    background: rgba(27, 94, 32, 0.1);
+    color: var(--primary-green);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .admin-title {
+        font-size: 2rem;
+    }
+
+    .total-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .table {
+        font-size: 0.85rem;
+    }
+
+    .table thead th,
+    .table tbody td {
+        padding: 10px;
+    }
+}
+</style>
+{% endblock %}

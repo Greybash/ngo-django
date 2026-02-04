@@ -1,0 +1,355 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5" style="margin-top: 90px;">
+    <div class="admin-header" data-aos="fade-down">
+        <div>
+            <h1 class="admin-title">Create New Job</h1>
+            <p class="admin-subtitle">Add a new job opening</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{% url 'manage_jobs' %}" class="btn btn-admin-secondary">
+                <i class="bi bi-arrow-left me-2"></i>
+                Back to Jobs
+            </a>
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-admin-secondary">
+                <i class="bi bi-speedometer2 me-2"></i>
+                Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10" data-aos="fade-up">
+            <div class="job-form-card">
+                <div class="card-header-custom">
+                    <h5><i class="bi bi-briefcase-fill me-2"></i>Job Details</h5>
+                </div>
+                <div class="card-body-custom">
+                    <form method="POST" class="job-form">
+                        {% csrf_token %}
+                        
+                        <div class="row g-4">
+                            <!-- Job Title -->
+                            <div class="col-md-8">
+                                <label for="title" class="form-label">
+                                    <i class="bi bi-card-heading me-2"></i>Job Title *
+                                </label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       placeholder="e.g., Senior Developer, Marketing Manager" required>
+                            </div>
+
+                            <!-- Employment Type -->
+                            <div class="col-md-4">
+                                <label for="employment_type" class="form-label">
+                                    <i class="bi bi-clock-history me-2"></i>Employment Type *
+                                </label>
+                                <select class="form-select" id="employment_type" name="employment_type" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Full-time">Full-time</option>
+                                    <option value="Part-time">Part-time</option>
+                                    <option value="Contract">Contract</option>
+                                    <option value="Internship">Internship</option>
+                                    <option value="Volunteer">Volunteer</option>
+                                </select>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="col-md-6">
+                                <label for="location" class="form-label">
+                                    <i class="bi bi-geo-alt-fill me-2"></i>Location *
+                                </label>
+                                <input type="text" class="form-control" id="location" name="location" 
+                                       placeholder="e.g., Mumbai, India or Remote" required>
+                            </div>
+
+                            <!-- Salary Range -->
+                            <div class="col-md-6">
+                                <label for="salary_range" class="form-label">
+                                    <i class="bi bi-cash me-2"></i>Salary Range
+                                    <small class="text-muted">(Optional)</small>
+                                </label>
+                                <input type="text" class="form-control" id="salary_range" name="salary_range" 
+                                       placeholder="e.g., ₹5-7 LPA or Competitive">
+                            </div>
+
+                            <!-- Job Description -->
+                            <div class="col-12">
+                                <label for="description" class="form-label">
+                                    <i class="bi bi-file-text me-2"></i>Job Description *
+                                </label>
+                                <textarea class="form-control" id="description" name="description" rows="6" 
+                                          placeholder="Describe the role, responsibilities, and what you're looking for..." required></textarea>
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Be detailed and specific about the role
+                                </small>
+                            </div>
+
+                            <!-- Requirements -->
+                            <div class="col-12">
+                                <label for="requirements" class="form-label">
+                                    <i class="bi bi-list-check me-2"></i>Requirements *
+                                </label>
+                                <textarea class="form-control" id="requirements" name="requirements" rows="6" 
+                                          placeholder="List the qualifications, skills, and experience needed..." required></textarea>
+                                <small class="text-muted">
+                                    <i class="bi bi-lightbulb me-1"></i>
+                                    Tip: Use bullet points for clarity (one per line)
+                                </small>
+                            </div>
+
+                            <!-- Responsibilities -->
+                           
+
+                            <!-- Application Deadline -->
+                            <div class="col-md-6">
+                                <label for="application_deadline" class="form-label">
+                                    <i class="bi bi-calendar-event me-2"></i>Application Deadline
+                                    <small class="text-muted">(Optional)</small>
+                                </label>
+                                <input type="date" class="form-control" id="application_deadline" name="application_deadline">
+                            </div>
+
+                            <!-- Is Active -->
+                            <div class="col-md-6">
+                                <label class="form-label d-block">
+                                    <i class="bi bi-toggle-on me-2"></i>Job Status
+                                </label>
+                                <div class="form-check form-switch" style="padding-left: 3rem;">
+                                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                                           checked style="width: 3rem; height: 1.5rem; cursor: pointer;">
+                                    <label class="form-check-label" for="is_active" style="padding-left: 0.5rem;">
+                                        <strong>Active</strong>
+                                        <small class="d-block text-muted">Job will be visible on the careers page</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-create">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                Create Job
+                            </button>
+                            <a href="{% url 'manage_jobs' %}" class="btn btn-cancel">
+                                <i class="bi bi-x-circle me-2"></i>
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Admin Header */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.admin-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary-green);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.admin-subtitle {
+    color: #6c757d;
+    margin-bottom: 0;
+    font-size: 1.1rem;
+}
+
+.btn-admin-secondary {
+    background: white;
+    color: var(--primary-green);
+    border: 2px solid var(--primary-green);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-admin-secondary:hover {
+    background: var(--primary-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
+}
+
+/* Job Form Card */
+.job-form-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 2px solid var(--border-color);
+}
+
+.card-header-custom {
+    background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+    color: white;
+    padding: 25px 30px;
+}
+
+.card-header-custom h5 {
+    margin: 0;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    font-size: 1.3rem;
+}
+
+.card-body-custom {
+    padding: 40px;
+}
+
+/* Form Styles */
+.job-form {
+    width: 100%;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--primary-green);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.form-label i {
+    color: var(--accent-green);
+}
+
+.form-control,
+.form-select {
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 0 0.2rem rgba(67, 160, 71, 0.15);
+}
+
+.form-control::placeholder {
+    color: #adb5bd;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-check-input {
+    border: 2px solid #e0e0e0;
+}
+
+.form-check-input:checked {
+    background-color: var(--accent-green);
+    border-color: var(--accent-green);
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(67, 160, 71, 0.15);
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 2px solid #f0f0f0;
+    flex-wrap: wrap;
+}
+
+.btn-create {
+    background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-create:hover {
+    background: linear-gradient(135deg, #66bb6a, var(--accent-green));
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(67, 160, 71, 0.4);
+}
+
+.btn-cancel {
+    background: white;
+    color: #6c757d;
+    border: 2px solid #dee2e6;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-cancel:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+    color: #495057;
+    transform: translateY(-2px);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-title {
+        font-size: 2rem;
+    }
+
+    .card-body-custom {
+        padding: 25px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-create,
+    .btn-cancel {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}

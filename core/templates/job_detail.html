@@ -1,0 +1,634 @@
+{% extends 'base.html' %}
+{% block title %}{{ job.title }} | Evergreen Villages Trust{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: #000;
+        color: #fff;
+    }
+
+    .page-offset {
+        margin-top: 90px;
+    }
+
+    /* Job Header */
+    .job-detail-hero {
+        min-height: 45vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.9)),
+                    url('/static/images/4th.png') center/cover fixed;
+        overflow: hidden;
+    }
+
+    .job-detail-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(67, 160, 71, 0.1) 0%, transparent 50%);
+        animation: pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 0.8; }
+    }
+
+    .job-badge {
+        display: inline-block;
+        background: var(--accent-green);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 20px;
+    }
+
+    .job-meta-header {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .job-meta-header span {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .job-meta-header i {
+        color: var(--accent-light);
+    }
+
+    /* Content Section */
+    .job-content-section {
+        background: #000;
+        padding: 80px 0;
+    }
+
+    .content-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 45px;
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+    }
+
+    .content-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(67, 160, 71, 0.3);
+    }
+
+    .card-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(67, 160, 71, 0.3);
+    }
+
+    .card-icon i {
+        font-size: 1.8rem;
+        color: white;
+    }
+
+    .content-title {
+        font-family: 'Playfair Display', serif;
+        color: var(--accent-light);
+        font-weight: 700;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(67, 160, 71, 0.3);
+        font-size: 1.6rem;
+    }
+
+    .content-body {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    /* Application Card */
+    .application-card {
+        background: linear-gradient(135deg, rgba(67, 160, 71, 0.15), rgba(67, 160, 71, 0.05));
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(67, 160, 71, 0.3);
+        border-radius: 30px;
+        padding: 50px 45px;
+    }
+
+    .application-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .header-icon {
+        width: 90px;
+        height: 90px;
+        background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px;
+        box-shadow: 0 15px 40px rgba(67, 160, 71, 0.3);
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .header-icon i {
+        font-size: 2.2rem;
+        color: white;
+    }
+
+    .application-header h3 {
+        font-family: 'Playfair Display', serif;
+        color: var(--accent-light);
+        font-weight: 700;
+        font-size: 2rem;
+    }
+
+    /* Form Styles */
+    .form-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        background: rgba(255, 255, 255, 0.08);
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        padding: 14px 18px;
+        color: #fff;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: var(--accent-green);
+        box-shadow: 0 0 0 4px rgba(67, 160, 71, 0.1);
+        color: #fff;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    .agreement-box {
+        background: rgba(67, 160, 71, 0.1);
+        border: 2px solid rgba(67, 160, 71, 0.3);
+        border-radius: 16px;
+        padding: 25px;
+    }
+
+    .form-check-input {
+        width: 24px;
+        height: 24px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.1);
+        margin-top: 0;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--accent-green);
+        border-color: var(--accent-green);
+    }
+
+    .form-check-label {
+        color: rgba(255, 255, 255, 0.9);
+        margin-left: 10px;
+    }
+
+    .btn-apply-submit {
+        background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+        border: none;
+        padding: 18px 40px;
+        border-radius: 14px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: white;
+        transition: all 0.4s ease;
+        box-shadow: 0 10px 30px rgba(67, 160, 71, 0.4);
+    }
+
+    .btn-apply-submit:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 40px rgba(67, 160, 71, 0.5);
+        color: white;
+    }
+
+    /* Sidebar */
+    .sidebar-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 35px;
+    }
+
+    .sidebar-title {
+        color: var(--accent-light);
+        font-weight: 700;
+        margin-bottom: 25px;
+        font-size: 1.3rem;
+    }
+
+    .fact-item {
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+        padding: 20px;
+        background: rgba(67, 160, 71, 0.1);
+        border-radius: 14px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .fact-item:hover {
+        background: rgba(67, 160, 71, 0.15);
+        transform: translateX(5px);
+    }
+
+    .fact-icon {
+        font-size: 28px;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        flex-shrink: 0;
+        color: var(--accent-light);
+    }
+
+    .fact-item small {
+        color: rgba(255, 255, 255, 0.6);
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .fact-item .fw-semibold {
+        color: rgba(255, 255, 255, 0.95);
+    }
+
+    /* Benefits */
+    .benefits-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .benefit-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 12px;
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .benefit-item i {
+        font-size: 20px;
+        color: var(--accent-green);
+    }
+
+    /* Share Buttons */
+    .share-buttons-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .share-button {
+        aspect-ratio: 1;
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        font-size: 20px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .share-button:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .share-button:nth-child(1):hover { background: #0077b5; color: white; }
+    .share-button:nth-child(2):hover { background: #1da1f2; color: white; }
+    .share-button:nth-child(3):hover { background: #1877f2; color: white; }
+    .share-button:nth-child(4):hover { background: var(--accent-green); color: white; }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+        .job-meta-header {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .content-card,
+        .application-card {
+            padding: 30px 25px;
+        }
+        
+        .sidebar-card {
+            margin-top: 30px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-offset"></div>
+
+<!-- Job Header -->
+<section class="job-detail-hero">
+    <div class="container d-flex align-items-center" style="min-height: 45vh;">
+        <div data-aos="fade-up">
+            <div class="job-badge">{{ job.employment_type }}</div>
+            <h1 class="display-4 fw-bold mb-3" style="font-family: 'Playfair Display', serif; color: var(--accent-light);">{{ job.title }}</h1>
+            <div class="job-meta-header">
+                <span><i class="bi bi-geo-alt-fill"></i>{{ job.location }}</span>
+                {% if job.salary_range %}
+                <span><i class="bi bi-cash"></i>{{ job.salary_range }}</span>
+                {% endif %}
+                <span><i class="bi bi-clock-fill"></i>{{ job.created_at|date:"M d, Y" }}</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Job Content -->
+<section class="job-content-section">
+    <div class="container">
+        <div class="row g-4">
+            
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                
+                <!-- Job Description -->
+                <div class="content-card" data-aos="fade-up">
+                    <div class="card-icon">
+                        <i class="bi bi-file-text-fill"></i>
+                    </div>
+                    <h3 class="content-title">About This Role</h3>
+                    <div class="content-body">
+                        {{ job.description|linebreaks }}
+                    </div>
+                </div>
+
+                <!-- Requirements -->
+                <div class="content-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-icon">
+                        <i class="bi bi-list-check"></i>
+                    </div>
+                    <h3 class="content-title">What We're Looking For</h3>
+                    <div class="content-body">
+                        {{ job.requirements|linebreaks }}
+                    </div>
+                </div>
+
+                <!-- Application Form / Already Applied Status -->
+                <div class="application-card" data-aos="fade-up" data-aos-delay="200">
+                    {% if has_applied %}
+                        <!-- Already Applied Status -->
+                        <div class="application-header">
+                            <div class="header-icon" style="background: linear-gradient(135deg, #4CAF50, #66bb6a);">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                            <h3 class="mb-2" style="color: #4CAF50;">Application Submitted</h3>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 1.1rem;">
+                                You have already applied for this position
+                            </p>
+                        </div>
+                        
+                        <div style="background: rgba(76, 175, 80, 0.1); border: 2px solid rgba(76, 175, 80, 0.3); border-radius: 16px; padding: 30px; text-align: center;">
+                            <i class="bi bi-info-circle" style="font-size: 2.5rem; color: #4CAF50; margin-bottom: 15px;"></i>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 1.05rem; margin-bottom: 20px;">
+                                Your application is currently under review. We'll contact you via email if you're selected for an interview.
+                            </p>
+                            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                                <a href="{% url 'jobs' %}" 
+                                   class="btn px-4 py-2" 
+                                   style="background: linear-gradient(135deg, var(--accent-green), #66bb6a); border: none; border-radius: 12px; color: white; font-weight: 600;">
+                                    <i class="bi bi-briefcase-fill me-2"></i>View Other Jobs
+                                </a>
+                                <a href="{% url 'home' %}" 
+                                   class="btn px-4 py-2" 
+                                   style="background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-weight: 600;">
+                                    <i class="bi bi-house-fill me-2"></i>Back to Home
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <!-- Application Form -->
+                        <div class="application-header">
+                            <div class="header-icon">
+                                <i class="bi bi-send-fill"></i>
+                            </div>
+                            <h3 class="mb-2">Apply for This Position</h3>
+                            <p style="color: rgba(255,255,255,0.6);">Join our team and make a difference</p>
+                        </div>
+                        
+                        <form method="post" enctype="multipart/form-data" class="application-form">
+    {% csrf_token %}
+
+    {% if form.errors %}
+        <div class="alert alert-danger mb-4">
+            {{ form.errors }}
+        </div>
+    {% endif %}
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Full Name</label>
+            <input type="text" name="name" class="form-control" required placeholder="John Doe">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" required placeholder="john@example.com">
+        </div>
+    </div>
+
+    <div class="row g-3 mt-2">
+        <div class="col-md-6">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" name="phone" class="form-control" required placeholder="+91 98765 43210">
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <label class="form-label">
+            Resume/CV
+            <small style="color: rgba(255,255,255,0.5);">
+                (PDF, DOC, DOCX - Max 5MB)
+            </small>
+        </label>
+        <input type="file" name="resume" class="form-control" required accept=".pdf,.doc,.docx">
+    </div>
+
+    <div class="mt-3">
+        <label class="form-label">Cover Letter</label>
+        <textarea name="cover_letter"
+                  class="form-control"
+                  rows="6"
+                  required
+                  placeholder="Tell us why you're a great fit for this role..."></textarea>
+    </div>
+
+    <div class="mt-4">
+        <div class="agreement-box">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="applicationConsent" required>
+                <label class="form-check-label" for="applicationConsent">
+                    <strong>I confirm that the information provided is accurate</strong>
+                    <p class="small mt-2 mb-0" style="color: rgba(255,255,255,0.6);">
+                        I understand that my application will be reviewed and I consent to be contacted regarding this position.
+                    </p>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-3">
+        <a href="{% url 'jobs' %}"
+           class="btn btn-outline-secondary px-4"
+           style="background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); color: #fff; border-radius: 14px; font-weight: 600;">
+            <i class="bi bi-arrow-left me-2"></i>Back to Jobs
+        </a>
+
+        <button type="submit" class="btn btn-apply-submit flex-grow-1">
+            <i class="bi bi-send-fill me-2"></i>Submit Application
+        </button>
+    </div>
+</form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                
+                <!-- Quick Facts -->
+                <div class="sidebar-card sticky-top" style="top: 100px;" data-aos="fade-left">
+                    <h5 class="sidebar-title">Position Details</h5>
+                    <div class="quick-facts">
+                        <div class="fact-item">
+                            <div class="fact-icon">
+                                <i class="bi bi-briefcase-fill"></i>
+                            </div>
+                            <div>
+                                <small>Employment Type</small>
+                                <p class="mb-0 fw-semibold">{{ job.employment_type }}</p>
+                            </div>
+                        </div>
+                        <div class="fact-item">
+                            <div class="fact-icon">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div>
+                                <small>Location</small>
+                                <p class="mb-0 fw-semibold">{{ job.location }}</p>
+                            </div>
+                        </div>
+                        {% if job.salary_range %}
+                        <div class="fact-item">
+                            <div class="fact-icon">
+                                <i class="bi bi-cash"></i>
+                            </div>
+                            <div>
+                                <small>Salary Range</small>
+                                <p class="mb-0 fw-semibold">{{ job.salary_range }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="fact-item">
+                            <div class="fact-icon">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+                            <div>
+                                <small>Posted On</small>
+                                <p class="mb-0 fw-semibold">{{ job.created_at|date:"M d, Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Benefits -->
+                <div class="sidebar-card mt-4" data-aos="fade-left" data-aos-delay="100">
+                    <h5 class="sidebar-title">What We Offer</h5>
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Competitive compensation</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Professional growth</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Meaningful work</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Collaborative environment</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Work-life balance</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Share -->
+                <div class="sidebar-card mt-4" data-aos="fade-left" data-aos-delay="200">
+                    <h5 class="sidebar-title">Share This Job</h5>
+                    <div class="share-buttons-grid">
+                        <a href="#" class="share-button" aria-label="Share on LinkedIn">
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                        <a href="#" class="share-button" aria-label="Share on Twitter">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                        <a href="#" class="share-button" aria-label="Share on Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" class="share-button" aria-label="Share via Email">
+                            <i class="bi bi-envelope-fill"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

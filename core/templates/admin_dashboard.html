@@ -1,0 +1,502 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5" style="margin-top: 90px;">
+    <div class="admin-header" data-aos="fade-down">
+        <div>
+            <h1 class="admin-title">Admin Dashboard</h1>
+            <p class="admin-subtitle">Overview and Management</p>
+        </div>
+        <a href="{% url 'admin:index' %}" class="btn btn-admin-secondary">
+            <i class="bi bi-gear-fill me-2"></i>
+            Django Admin
+        </a>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4 g-4">
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+            <div class="stat-card stat-primary">
+                <div class="stat-icon">
+                    <i class="bi bi-currency-rupee"></i>
+                </div>
+                <div class="stat-content">
+                    <h5 class="stat-label">Total Donations</h5>
+                    <h2 class="stat-value">₹{{ total_donations|floatformat:2 }}</h2>
+                    <small class="stat-meta">{{ donations_count }} donations</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+            <div class="stat-card stat-success">
+                <div class="stat-icon">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div class="stat-content">
+                    <h5 class="stat-label">Volunteers</h5>
+                    <h2 class="stat-value">{{ total_volunteers }}</h2>
+                    <small class="stat-meta">{{ pending_volunteers }} pending</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+            <div class="stat-card stat-info">
+                <div class="stat-icon">
+                    <i class="bi bi-briefcase-fill"></i>
+                </div>
+                <div class="stat-content">
+                    <h5 class="stat-label">Active Jobs</h5>
+                    <h2 class="stat-value">{{ active_jobs }}</h2>
+                    <small class="stat-meta">{{ pending_applications }} applications</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+            <div class="stat-card stat-warning">
+                <div class="stat-icon">
+                    <i class="bi bi-lightning-fill"></i>
+                </div>
+                <div class="stat-content">
+                    <h5 class="stat-label">Quick Actions</h5>
+                    <a href="{% url 'manage_volunteers' %}" class="btn btn-quick-action">
+                        Manage Volunteers
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="row mb-4" data-aos="fade-up">
+        <div class="col-12">
+            <div class="nav-card">
+                <a href="{% url 'manage_volunteers' %}" class="nav-link-card">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Volunteers</span>
+                </a>
+                <a href="{% url 'manage_jobs' %}" class="nav-link-card">
+                    <i class="bi bi-briefcase-fill"></i>
+                    <span>Jobs</span>
+                </a>
+                <a href="{% url 'donation_reports' %}" class="nav-link-card">
+                    <i class="bi bi-file-earmark-text-fill"></i>
+                    <span>Donation Reports</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Data -->
+    <div class="row g-4">
+        <div class="col-md-6" data-aos="fade-up">
+            <div class="data-card">
+                <div class="card-header-custom">
+                    <h5><i class="bi bi-cash-stack me-2"></i>Recent Donations</h5>
+                </div>
+                <div class="card-body-custom">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Donor</th>
+                                    <th>Amount</th>
+                                    <th>Cause</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for donation in recent_donations %}
+                                <tr>
+                                    <td>{{ donation.first_name }} {{ donation.last_name|default:donation.email }}</td>
+                                    <td class="fw-bold text-success">₹{{ donation.amount }}</td>
+                                    <td>{{ donation.get_cause_display }}</td>
+                                    <td>{{ donation.created_at|date:"M d, Y" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="data-card">
+                <div class="card-header-custom">
+                    <h5><i class="bi bi-person-badge me-2"></i>Recent Volunteer Applications</h5>
+                </div>
+                <div class="card-body-custom">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Interest</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for volunteer in recent_volunteers %}
+                                <tr>
+                                    <td>{{ volunteer.name }}</td>
+                                    <td>{{ volunteer.get_area_of_interest_display }}</td>
+                                    <td>
+                                        <span class="badge badge-{% if volunteer.status == 'approved' %}success{% elif volunteer.status == 'pending' %}warning{% else %}danger{% endif %}">
+                                            {{ volunteer.status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ volunteer.created_at|date:"M d, Y" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donations by Cause -->
+    <div class="row mt-4" data-aos="fade-up">
+        <div class="col-12">
+            <div class="data-card">
+                <div class="card-header-custom">
+                    <h5><i class="bi bi-pie-chart-fill me-2"></i>Donations by Cause</h5>
+                </div>
+                <div class="card-body-custom">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Cause</th>
+                                    <th>Amount</th>
+                                    <th>Count</th>
+                                    <th>Progress</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in donations_by_cause %}
+                                <tr>
+                                    <td class="fw-semibold">{{ item.cause }}</td>
+                                    <td class="text-success fw-bold">₹{{ item.total|floatformat:2 }}</td>
+                                    <td>{{ item.count }}</td>
+                                    <td>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar bg-success" style="width: {{ item.percentage }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Admin Header */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.admin-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary-green);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.admin-subtitle {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.btn-admin-secondary {
+    background: white;
+    color: var(--primary-green);
+    border: 2px solid var(--primary-green);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-admin-secondary:hover {
+    background: var(--primary-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
+}
+
+/* Stat Cards */
+.stat-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-card.stat-primary {
+    border-color: #0d6efd;
+}
+
+.stat-card.stat-success {
+    border-color: #198754;
+}
+
+.stat-card.stat-info {
+    border-color: #0dcaf0;
+}
+
+.stat-card.stat-warning {
+    border-color: #ffc107;
+}
+
+.stat-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.stat-primary .stat-icon {
+    background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+    color: white;
+}
+
+.stat-success .stat-icon {
+    background: linear-gradient(135deg, #198754, #20c997);
+    color: white;
+}
+
+.stat-info .stat-icon {
+    background: linear-gradient(135deg, #0dcaf0, #0d6efd);
+    color: white;
+}
+
+.stat-warning .stat-icon {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    color: white;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-green);
+    margin-bottom: 5px;
+}
+
+.stat-meta {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.btn-quick-action {
+    background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-quick-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
+    color: white;
+}
+
+/* Navigation Card */
+.nav-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    gap: 15px;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid var(--border-color);
+}
+
+.nav-link-card {
+    flex: 1;
+    background: linear-gradient(135deg, rgba(27, 94, 32, 0.05), rgba(165, 214, 167, 0.1));
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    color: var(--primary-green);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.nav-link-card:hover {
+    background: var(--primary-green);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
+    border-color: var(--accent-light);
+}
+
+.nav-link-card i {
+    display: block;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+/* Data Cards */
+.data-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid var(--border-color);
+    height: 100%;
+}
+
+.card-header-custom {
+    background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+    color: white;
+    padding: 20px 25px;
+}
+
+.card-header-custom h5 {
+    margin: 0;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+.card-body-custom {
+    padding: 25px;
+}
+
+/* Table Styles */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background: rgba(27, 94, 32, 0.05);
+    color: var(--primary-green);
+    font-weight: 700;
+    border-bottom: 2px solid var(--accent-light);
+    padding: 15px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background: rgba(27, 94, 32, 0.03);
+}
+
+.table tbody td {
+    padding: 15px;
+    vertical-align: middle;
+}
+
+/* Custom Badges */
+.badge {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-success {
+    background: #198754;
+}
+
+.badge-warning {
+    background: #ffc107;
+    color: #000;
+}
+
+.badge-danger {
+    background: #dc3545;
+}
+
+/* Progress Bar */
+.progress {
+    background: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    border-radius: 10px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .admin-title {
+        font-size: 2rem;
+    }
+
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .nav-card {
+        flex-direction: column;
+    }
+
+    .table {
+        font-size: 0.85rem;
+    }
+}
+</style>
+{% endblock %}

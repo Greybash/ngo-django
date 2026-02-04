@@ -1,0 +1,635 @@
+{% extends 'base.html' %}
+{% block title %}Volunteer | Evergreen Villages Trust{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: #000;
+        color: #fff;
+    }
+
+    .page-offset {
+        margin-top: 90px;
+    }
+
+    /* Hero Section */
+    .volunteer-hero {
+        min-height: 50vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.85)), 
+                    url('/static/images/5th.png') center/cover fixed;
+        overflow: hidden;
+    }
+
+    .volunteer-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 70% 50%, rgba(67, 160, 71, 0.1) 0%, transparent 50%);
+        animation: pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 0.8; }
+    }
+
+    /* Benefits Section */
+    .benefits-section {
+        background: #000;
+        padding: 80px 0;
+    }
+
+    .benefit-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 40px 30px;
+        border-radius: 24px;
+        text-align: center;
+        transition: all 0.4s ease;
+        height: 100%;
+    }
+
+    .benefit-card:hover {
+        transform: translateY(-12px);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(67, 160, 71, 0.3);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+
+    .benefit-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 25px;
+        background: linear-gradient(135deg, rgba(67, 160, 71, 0.2), rgba(165, 214, 167, 0.1));
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        transition: all 0.4s ease;
+    }
+
+    .benefit-card:hover .benefit-icon {
+        transform: scale(1.1) rotate(5deg);
+        background: linear-gradient(135deg, var(--accent-green), rgba(165, 214, 167, 0.3));
+    }
+
+    .benefit-card h5 {
+        color: var(--accent-light);
+        font-weight: 700;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+    }
+
+    .benefit-card .text-muted {
+        color: rgba(255, 255, 255, 0.6) !important;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* Form Section */
+    .form-section-bg {
+        background: #000;
+        padding: 80px 0;
+    }
+
+    .volunteer-form-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 30px;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    }
+
+    .volunteer-badge {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        font-size: 3rem;
+        color: white;
+        box-shadow: 0 12px 32px rgba(67, 160, 71, 0.4);
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    .volunteer-form-card h2 {
+        font-family: 'Playfair Display', serif;
+        color: var(--accent-light);
+        font-size: 2.2rem;
+        font-weight: 700;
+    }
+
+    .form-section {
+        position: relative;
+        padding-left: 25px;
+        border-left: 3px solid rgba(67, 160, 71, 0.3);
+    }
+
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        color: var(--accent-light);
+        font-weight: 700;
+        font-size: 1.4rem;
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+    }
+
+    .form-control, .form-select {
+        background: rgba(255, 255, 255, 0.08);
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        padding: 14px 18px;
+        color: #fff;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: var(--accent-green);
+        box-shadow: 0 0 0 4px rgba(67, 160, 71, 0.1);
+        color: #fff;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    .form-select option {
+        background: #1a1a1a;
+        color: #fff;
+    }
+
+    .agreement-check {
+        background: rgba(67, 160, 71, 0.1);
+        border: 2px solid rgba(67, 160, 71, 0.3);
+        border-radius: 16px;
+        padding: 25px;
+    }
+
+    .form-check-input {
+        width: 24px;
+        height: 24px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.1);
+        margin-top: 0;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--accent-green);
+        border-color: var(--accent-green);
+    }
+
+    .form-check-label {
+        color: rgba(255, 255, 255, 0.9);
+        margin-left: 10px;
+    }
+
+    .form-check-label small {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .btn-volunteer-submit {
+        background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+        border: none;
+        padding: 18px 50px;
+        border-radius: 14px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: white;
+        transition: all 0.4s ease;
+        box-shadow: 0 10px 30px rgba(67, 160, 71, 0.4);
+        letter-spacing: 0.5px;
+    }
+
+    .btn-volunteer-submit:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 40px rgba(67, 160, 71, 0.5);
+        background: linear-gradient(135deg, #43a047, #66bb6a);
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(rgba(27, 94, 32, 0.9), rgba(27, 94, 32, 0.95)), 
+                    url('/static/images/3rd.png') center/cover fixed;
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: pulse 15s ease-in-out infinite;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+        .volunteer-hero {
+            min-height: 40vh;
+        }
+
+        .volunteer-hero h1 {
+            font-size: 2rem;
+        }
+
+        .volunteer-badge {
+            width: 80px;
+            height: 80px;
+            font-size: 2.5rem;
+        }
+
+        .volunteer-form-card h2 {
+            font-size: 1.8rem;
+        }
+
+        .btn-volunteer-submit {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-offset"></div>
+
+<!-- HERO SECTION -->
+<section class="volunteer-hero">
+    <div class="container text-center">
+        <div data-aos="fade-up">
+            <h1 class="display-3 fw-bold mb-3">Join Our Mission</h1>
+            <p class="lead fs-4">Be the change you wish to see in the world</p>
+            <p class="mt-3" style="color: rgba(255,255,255,0.8);">Together, we can create sustainable communities and empower lives</p>
+        </div>
+    </div>
+</section>
+
+<!-- BENEFITS SECTION -->
+<section class="benefits-section">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-6 mb-3" style="font-family: 'Playfair Display', serif; color: var(--accent-light);">Why Volunteer With Us?</h2>
+            <p style="color: rgba(255,255,255,0.6);">Make an impact while growing personally and professionally</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1H2zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5z"/>
+                            <path d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-2 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+                        </svg>
+                    </div>
+                    <h5>Make Real Impact</h5>
+                    <p class="text-muted">Directly contribute to positive change in rural communities</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                        </svg>
+                    </div>
+                    <h5>Build Connections</h5>
+                    <p class="text-muted">Meet like-minded people and create lasting friendships</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                    </div>
+                    <h5>Develop Skills</h5>
+                    <p class="text-muted">Gain valuable experience in community service and leadership</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- GET INVOLVED SECTION -->
+<section class="benefits-section">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-6 mb-3" style="font-family: 'Playfair Display', serif; color: var(--accent-light);">Get Involved</h2>
+            <p style="color: rgba(255,255,255,0.6);">Be a part of the change</p>
+        </div>
+
+        <div class="text-center mb-5" data-aos="fade-up">
+            <p style="max-width: 850px; margin: auto; color: rgba(255,255,255,0.7); font-size: 1.05rem;">
+                At <strong>Evergreen Villages Trust</strong>, we believe real transformation begins when
+                compassionate people come together for a shared purpose. Whether you're a student,
+                professional, farmer, donor, or simply someone who cares — there's a place for you in our journey.
+                Join us in building greener, kinder, and self-sustained communities.
+            </p>
+        </div>
+
+        <!-- ACTIVITIES -->
+        <div class="text-center mb-4" data-aos="fade-up">
+            <h3 class="display-6 mb-3" style="font-family: 'Playfair Display', serif; color: var(--accent-light); font-size: 2rem;">Our Activities</h3>
+        </div>
+        
+        <div class="row g-4 mb-5">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="bi bi-people-fill"></i></div>
+                    <h5>Community Meals</h5>
+                    <p class="text-muted">Help organize and serve nutritious meals for rural communities.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="bi bi-tree-fill"></i></div>
+                    <h5>Tree Plantation Drives</h5>
+                    <p class="text-muted">Participate in afforestation and environmental restoration initiatives.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="bi bi-mortarboard-fill"></i></div>
+                    <h5>Student Mentoring & Training</h5>
+                    <p class="text-muted">Guide students with academic support and career mentorship.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+                    <h5>Health Camps & Rural Outreach</h5>
+                    <p class="text-muted">Support medical camps and awareness programs in villages.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="bi bi-calendar-event-fill"></i></div>
+                    <h5>Administrative Support</h5>
+                    <p class="text-muted">Help with planning, coordination, and execution of events.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="bi bi-laptop-fill"></i></div>
+                    <h5>Digital & Technical Support</h5>
+                    <p class="text-muted">Contribute your tech or digital skills to strengthen our mission.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- WHO CAN APPLY -->
+        <div class="text-center mb-4" data-aos="fade-up">
+            <h3 class="display-6 mb-3" style="font-family: 'Playfair Display', serif; color: var(--accent-light); font-size: 2rem;">Who Can Apply?</h3>
+            <p style="color: rgba(255,255,255,0.6);">Everyone with the heart to serve</p>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="bi bi-mortarboard-fill"></i></div>
+                    <h5>School & College Students</h5>
+                    <p class="text-muted">Gain real-world exposure while creating social impact.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="bi bi-briefcase-fill"></i></div>
+                    <h5>Working Professionals</h5>
+                    <p class="text-muted">Flexible weekend volunteering opportunities.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="bi bi-buildings-fill"></i></div>
+                    <h5>CSR Teams & Clubs</h5>
+                    <p class="text-muted">Partner with us for impactful corporate social initiatives.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SHARE YOUR SKILLS -->
+        <div class="text-center mb-4" data-aos="fade-up">
+            <h3 class="display-6 mb-3" style="font-family: 'Playfair Display', serif; color: var(--accent-light); font-size: 2rem;">Share Your Skills</h3>
+            <p style="color: rgba(255,255,255,0.6);">Serve in the way you do best</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-3" data-aos="fade-up">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+                    <h5>Doctors</h5>
+                    <p class="text-muted">Host rural health webinars or join medical camps.</p>
+                </div>
+            </div>
+
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="bi bi-palette-fill"></i></div>
+                    <h5>Designers</h5>
+                    <p class="text-muted">Create digital media and awareness campaigns.</p>
+                </div>
+            </div>
+
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="bi bi-lightbulb-fill"></i></div>
+                    <h5>Entrepreneurs</h5>
+                    <p class="text-muted">Mentor students with real-world skills.</p>
+                </div>
+            </div>
+
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="bi bi-code-slash"></i></div>
+                    <h5>Tech Professionals</h5>
+                    <p class="text-muted">Support our website and digital tools.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- FORM SECTION -->
+<section class="form-section-bg">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="volunteer-form-card" data-aos="fade-up">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="text-center mb-5">
+                            <div class="volunteer-badge mb-4">
+                                <i class="bi bi-heart-fill"></i>
+                            </div>
+                            <h2 class="mb-3">Volunteer Application</h2>
+                            <p style="color: rgba(255,255,255,0.6);">Fill out the form below to start your volunteering journey</p>
+                        </div>
+
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background: rgba(67, 160, 71, 0.2); border: 1px solid var(--accent-green); color: var(--accent-light);">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <form method="post" class="volunteer-form">
+                            {% csrf_token %}
+                            
+                            <!-- Personal Information -->
+                            <div class="form-section mb-5" data-aos="fade-up">
+                                <h5 class="section-title">Personal Information</h5>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name *</label>
+                                    <input type="text" name="name" class="form-control" 
+                                           required placeholder="John Doe"
+                                           value="{% if user.is_authenticated %}{{ user.get_full_name }}{% endif %}">
+                                </div>
+
+                                <div class="row g-3 mt-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email Address *</label>
+                                        <input type="email" name="email" class="form-control" 
+                                               required placeholder="john.doe@example.com"
+                                               value="{% if user.is_authenticated %}{{ user.email }}{% endif %}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Phone Number *</label>
+                                        <input type="tel" name="phone" class="form-control" 
+                                               required placeholder="+91 98765 43210">
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <label class="form-label">Address *</label>
+                                    <textarea name="address" class="form-control" rows="2" 
+                                              required placeholder="Enter your full address"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Volunteer Preferences -->
+                            <div class="form-section mb-5" data-aos="fade-up" data-aos-delay="100">
+                                <h5 class="section-title">Volunteer Preferences</h5>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label">Area of Interest *</label>
+                                    <select name="area_of_interest" class="form-select" required>
+                                        <option value="">Select your interest...</option>
+                                        <option value="teaching">Teaching</option>
+                                        <option value="healthcare">Healthcare</option>
+                                        <option value="environment">Environment</option>
+                                        <option value="fundraising">Fundraising</option>
+                                        <option value="events">Event Management</option>
+                                        <option value="admin">Administrative Work</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Availability *</label>
+                                    <select name="availability" class="form-select" required>
+                                        <option value="">Select your availability...</option>
+                                        <option value="weekends">Weekends Only</option>
+                                        <option value="weekdays">Weekdays</option>
+                                        <option value="flexible">Flexible</option>
+                                        <option value="specific">Specific Days</option>
+                                        <option value="2-4">2-4 hours per week</option>
+                                        <option value="5-10">5-10 hours per week</option>
+                                        <option value="10+">10+ hours per week</option>
+                                        <option value="one-time">One-time events only</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Skills & Experience -->
+                            <div class="form-section mb-5" data-aos="fade-up" data-aos-delay="200">
+                                <h5 class="section-title">Skills & Experience</h5>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label">Previous Volunteer Experience</label>
+                                    <textarea name="experience" class="form-control" rows="4" 
+                                              placeholder="Share any previous volunteering experience, relevant skills, or why you want to volunteer with us..."></textarea>
+                                    <small style="color: rgba(255,255,255,0.5);">This field is optional but helps us match you with the right opportunities</small>
+                                </div>
+                            </div>
+
+                            <!-- Terms & Conditions -->
+                            <div class="form-section mb-4" data-aos="fade-up" data-aos-delay="300">
+                                <div class="form-check agreement-check">
+                                    <input class="form-check-input" type="checkbox" id="agreementCheck" required>
+                                    <label class="form-check-label" for="agreementCheck">
+                                        <strong>I agree to the volunteer terms and conditions</strong>
+                                        <p class="small mb-0 mt-2" style="color: rgba(255,255,255,0.6);">
+                                            I understand the responsibilities of volunteering and commit to being reliable, 
+                                            respectful, and dedicated to the organization's mission.
+                                        </p>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="text-center" data-aos="fade-up" data-aos-delay="400">
+                                <button type="submit" class="btn btn-volunteer-submit">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    Submit Application
+                                </button>
+                                <p class="small mt-3" style="color: rgba(255,255,255,0.5);">
+                                    We'll review your application and get back to you within 3-5 business days
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="cta-section text-white position-relative">
+    <div class="container text-center" style="position: relative; z-index: 2;" data-aos="fade-up">
+        <h3 class="display-6 mb-4">Have Questions?</h3>
+        <p class="lead mb-4">We're here to help you get started on your volunteering journey</p>
+        <a href="mailto:evergreenvillagestrust@gmail.com" class="btn btn-light btn-lg px-5" style="border-radius: 14px; font-weight: 600;">
+            <i class="bi bi-envelope-fill me-2"></i>
+            Contact Us
+        </a>
+    </div>
+</section>
+
+{% endblock %}

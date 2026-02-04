@@ -1,0 +1,964 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5" style="margin-top: 90px;">
+    <div class="admin-header" data-aos="fade-down">
+        <div>
+            <h1 class="admin-title">Job Applications</h1>
+            <p class="admin-subtitle">{{ job.title }}</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{% url 'export_applications' job.id %}" class="btn btn-export">
+                <i class="bi bi-file-earmark-spreadsheet me-2"></i>
+                Export CSV
+            </a>
+            <a href="{% url 'manage_jobs' %}" class="btn btn-admin-secondary">
+                <i class="bi bi-arrow-left me-2"></i>
+                Back to Jobs
+            </a>
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-admin-secondary">
+                <i class="bi bi-speedometer2 me-2"></i>
+                Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Job Details Card -->
+    <div class="row mb-4">
+        <div class="col-12" data-aos="fade-up">
+            <div class="job-info-card">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h4 class="mb-2">
+                            <i class="bi bi-briefcase-fill text-success me-2"></i>
+                            {{ job.title }}
+                        </h4>
+                        <div class="job-meta-info">
+                            <span class="meta-item">
+                                <i class="bi bi-geo-alt-fill"></i>
+                                {{ job.location }}
+                            </span>
+                            <span class="meta-item">
+                                <i class="bi bi-clock-fill"></i>
+                                {{ job.employment_type }}
+                            </span>
+                            {% if job.salary_range %}
+                            <span class="meta-item">
+                                <i class="bi bi-cash"></i>
+                                {{ job.salary_range }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <div class="application-stats">
+                            <h2 class="stat-number">{{ applications.count }}</h2>
+                            <p class="stat-label">Total Applications</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4 g-3">
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+            <div class="mini-stat-card stat-pending">
+                <div class="mini-stat-icon">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+                <div class="mini-stat-content">
+                    <h3>{{ pending_count }}</h3>
+                    <p>Pending</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+            <div class="mini-stat-card stat-reviewed">
+                <div class="mini-stat-icon">
+                    <i class="bi bi-eye-fill"></i>
+                </div>
+                <div class="mini-stat-content">
+                    <h3>{{ reviewed_count }}</h3>
+                    <p>Reviewed</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+            <div class="mini-stat-card stat-shortlisted">
+                <div class="mini-stat-icon">
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <div class="mini-stat-content">
+                    <h3>{{ shortlisted_count }}</h3>
+                    <p>Shortlisted</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+            <div class="mini-stat-card stat-rejected">
+                <div class="mini-stat-icon">
+                    <i class="bi bi-x-circle-fill"></i>
+                </div>
+                <div class="mini-stat-content">
+                    <h3>{{ rejected_count }}</h3>
+                    <p>Rejected</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applications List -->
+    <div class="row">
+        <div class="col-12" data-aos="fade-up">
+            <div class="data-card">
+                <div class="card-header-custom">
+                    <h5><i class="bi bi-person-lines-fill me-2"></i>All Applications</h5>
+                </div>
+                <div class="card-body-custom">
+                    {% if applications %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Applicant</th>
+                                    <th>Contact</th>
+                                    <th>Applied On</th>
+                                    <th>Resume</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for application in applications %}
+                                <tr class="application-row">
+                                    <td>
+                                        <div class="applicant-info">
+                                            <div class="applicant-avatar">
+                                                {{ application.name|first|upper }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ application.name }}</div>
+                                                <small class="text-muted">ID: #{{ application.id }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <i class="bi bi-envelope me-1"></i>
+                                            <small>{{ application.email }}</small>
+                                        </div>
+                                        <div>
+                                            <i class="bi bi-telephone me-1"></i>
+                                            <small>{{ application.phone }}</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="date-badge">
+                                            {{ application.created_at|date:"M d, Y" }}
+                                        </span>
+                                        <br>
+                                        <small class="text-muted">{{ application.created_at|time:"h:i A" }}</small>
+                                    </td>
+                                    <td>
+                                        {% if application.resume %}
+                                        <a href="{{ application.resume.url }}" target="_blank" class="btn-download" onclick="event.stopPropagation();">
+                                            <i class="bi bi-download"></i>
+                                            Download
+                                        </a>
+                                        {% else %}
+                                        <span class="text-muted">No resume</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-{{ application.status }}">
+                                            {{ application.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button type="button" class="btn-action btn-view" 
+                                                    onclick="openModal('applicationModal{{ application.id }}')"
+                                                    title="View Details">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </button>
+                                            <div class="dropdown d-inline">
+                                                <button class="btn-action btn-status" type="button" 
+                                                        data-bs-toggle="dropdown" 
+                                                        aria-expanded="false"
+                                                        title="Change Status">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li>
+                                                        <form method="POST" class="d-inline">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="application_id" value="{{ application.id }}">
+                                                            <input type="hidden" name="status" value="pending">
+                                                            <button type="submit" class="dropdown-item">
+                                                                <i class="bi bi-hourglass-split me-2"></i>
+                                                                Pending
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form method="POST" class="d-inline">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="application_id" value="{{ application.id }}">
+                                                            <input type="hidden" name="status" value="reviewed">
+                                                            <button type="submit" class="dropdown-item">
+                                                                <i class="bi bi-eye me-2"></i>
+                                                                Reviewed
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form method="POST" class="d-inline">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="application_id" value="{{ application.id }}">
+                                                            <input type="hidden" name="status" value="shortlisted">
+                                                            <button type="submit" class="dropdown-item">
+                                                                <i class="bi bi-star me-2"></i>
+                                                                Shortlisted
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <form method="POST" class="d-inline">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="application_id" value="{{ application.id }}">
+                                                            <input type="hidden" name="status" value="rejected">
+                                                            <button type="submit" class="dropdown-item text-danger">
+                                                                <i class="bi bi-x-circle me-2"></i>
+                                                                Rejected
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Application Detail Modal -->
+                                <div class="modal fade" id="applicationModal{{ application.id }}" tabindex="-1" aria-labelledby="modalLabel{{ application.id }}" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalLabel{{ application.id }}">
+                                                    <i class="bi bi-person-badge me-2"></i>
+                                                    Application Details
+                                                </h5>
+                                                <button type="button" class="btn-close" onclick="closeModal('applicationModal{{ application.id }}')" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="application-detail">
+                                                    <div class="detail-section">
+                                                        <h6><i class="bi bi-person-fill me-2"></i>Personal Information</h6>
+                                                        <div class="detail-grid">
+                                                            <div class="detail-item">
+                                                                <label>Name</label>
+                                                                <p>{{ application.name }}</p>
+                                                            </div>
+                                                            <div class="detail-item">
+                                                                <label>Email</label>
+                                                                <p>{{ application.email }}</p>
+                                                            </div>
+                                                            <div class="detail-item">
+                                                                <label>Phone</label>
+                                                                <p>{{ application.phone }}</p>
+                                                            </div>
+                                                            <div class="detail-item">
+                                                                <label>Applied On</label>
+                                                                <p>{{ application.created_at|date:"F d, Y at h:i A" }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="detail-section">
+                                                        <h6><i class="bi bi-file-text-fill me-2"></i>Cover Letter</h6>
+                                                        <div class="cover-letter-box">
+                                                            {{ application.cover_letter|linebreaks }}
+                                                        </div>
+                                                    </div>
+
+                                                    {% if application.resume %}
+                                                    <div class="detail-section">
+                                                        <h6><i class="bi bi-file-earmark-pdf-fill me-2"></i>Resume</h6>
+                                                        <a href="{{ application.resume.url }}" target="_blank" class="btn btn-download-large" onclick="event.stopPropagation();">
+                                                            <i class="bi bi-download me-2"></i>
+                                                            Download Resume
+                                                        </a>
+                                                    </div>
+                                                    {% endif %}
+
+                                                    <div class="detail-section">
+                                                        <h6><i class="bi bi-flag-fill me-2"></i>Current Status</h6>
+                                                        <span class="status-badge status-{{ application.status }} large">
+                                                            {{ application.get_status_display }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" onclick="closeModal('applicationModal{{ application.id }}')">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="no-data-container">
+                        <div class="no-data-icon">
+                            <i class="bi bi-inbox"></i>
+                        </div>
+                        <h4>No Applications Yet</h4>
+                        <p>There are no applications for this job position yet.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Admin Header */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.admin-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary-green);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.admin-subtitle {
+    color: #6c757d;
+    margin-bottom: 0;
+    font-size: 1.1rem;
+}
+
+.btn-admin-secondary {
+    background: white;
+    color: var(--primary-green);
+    border: 2px solid var(--primary-green);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-admin-secondary:hover {
+    background: var(--primary-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
+}
+
+.btn-export {
+    background: linear-gradient(135deg, #198754, #20c997);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+}
+
+.btn-export:hover {
+    background: linear-gradient(135deg, #20c997, #198754);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(25, 135, 84, 0.4);
+}
+
+/* Job Info Card */
+.job-info-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid var(--border-color);
+}
+
+.job-meta-info {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+
+.meta-item i {
+    color: var(--accent-green);
+}
+
+.application-stats {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-green);
+    margin-bottom: 0;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+/* Mini Stat Cards */
+.mini-stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.mini-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.mini-stat-card.stat-pending {
+    border-color: #ffc107;
+}
+
+.mini-stat-card.stat-reviewed {
+    border-color: #0dcaf0;
+}
+
+.mini-stat-card.stat-shortlisted {
+    border-color: #198754;
+}
+
+.mini-stat-card.stat-rejected {
+    border-color: #dc3545;
+}
+
+.mini-stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.stat-pending .mini-stat-icon {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.stat-reviewed .mini-stat-icon {
+    background: rgba(13, 202, 240, 0.1);
+    color: #0dcaf0;
+}
+
+.stat-shortlisted .mini-stat-icon {
+    background: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+
+.stat-rejected .mini-stat-icon {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.mini-stat-content h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-green);
+    margin-bottom: 0;
+}
+
+.mini-stat-content p {
+    margin-bottom: 0;
+    color: #6c757d;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Data Card */
+.data-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid var(--border-color);
+}
+
+.card-header-custom {
+    background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+    color: white;
+    padding: 20px 25px;
+}
+
+.card-header-custom h5 {
+    margin: 0;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+.card-body-custom {
+    padding: 25px;
+}
+
+/* Table Styles */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background: rgba(27, 94, 32, 0.05);
+    color: var(--primary-green);
+    font-weight: 700;
+    border-bottom: 2px solid var(--accent-light);
+    padding: 15px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background: rgba(27, 94, 32, 0.03);
+}
+
+.table tbody td {
+    padding: 15px;
+    vertical-align: middle;
+}
+
+/* Applicant Info */
+.applicant-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.applicant-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-green), var(--primary-green));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+.status-badge.large {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+}
+
+.status-pending {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid #ffc107;
+}
+
+.status-reviewed {
+    background: rgba(13, 202, 240, 0.2);
+    color: #0dcaf0;
+    border: 1px solid #0dcaf0;
+}
+
+.status-shortlisted {
+    background: rgba(25, 135, 84, 0.2);
+    color: #198754;
+    border: 1px solid #198754;
+}
+
+.status-rejected {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    border: 1px solid #dc3545;
+}
+
+/* Buttons */
+.btn-download {
+    background: var(--accent-green);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+}
+
+.btn-download:hover {
+    background: var(--primary-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
+}
+
+.btn-download-large {
+    background: var(--accent-green);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.btn-download-large:hover {
+    background: var(--primary-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-action {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-view {
+    background: rgba(13, 202, 240, 0.1);
+    color: #0dcaf0;
+}
+
+.btn-view:hover {
+    background: #0dcaf0;
+    color: white;
+}
+
+.btn-status {
+    background: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+
+.btn-status:hover {
+    background: #6c757d;
+    color: white;
+}
+
+.date-badge {
+    display: inline-block;
+    background: rgba(27, 94, 32, 0.1);
+    color: var(--primary-green);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Modal Styles */
+.modal {
+    z-index: 1055 !important;
+}
+
+.modal-backdrop {
+    z-index: 1050 !important;
+    background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.modal.show {
+    display: block !important;
+}
+
+.modal-content {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1056 !important;
+    pointer-events: auto !important;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+    color: white;
+    border-radius: 20px 20px 0 0;
+    padding: 20px 30px;
+    border: none;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 1;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+}
+
+.modal-header .btn-close:hover {
+    opacity: 0.8;
+}
+
+.modal-title {
+    font-weight: 700;
+}
+
+.modal-body {
+    padding: 30px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.application-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.detail-section h6 {
+    color: var(--primary-green);
+    font-weight: 700;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--accent-light);
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.detail-item label {
+    display: block;
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-item p {
+    margin: 0;
+    color: #212529;
+    font-weight: 500;
+}
+
+.cover-letter-box {
+    background: rgba(27, 94, 32, 0.05);
+    border-left: 4px solid var(--accent-green);
+    padding: 20px;
+    border-radius: 10px;
+    color: #495057;
+    line-height: 1.7;
+}
+
+/* No Data State */
+.no-data-container {
+    text-align: center;
+    padding: 80px 40px;
+}
+
+.no-data-icon {
+    font-size: 80px;
+    color: var(--accent-light);
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.no-data-container h4 {
+    color: var(--primary-green);
+    margin-bottom: 10px;
+}
+
+.no-data-container p {
+    color: #6c757d;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-title {
+        font-size: 2rem;
+    }
+
+    .job-meta-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .table {
+        font-size: 0.85rem;
+    }
+
+    .applicant-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// Modal control functions
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop fade show';
+    backdrop.id = `backdrop-${modalId}`;
+    backdrop.onclick = function() {
+        closeModal(modalId);
+    };
+    
+    document.body.appendChild(backdrop);
+    document.body.classList.add('modal-open');
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = '0px';
+    
+    modal.classList.add('show');
+    modal.style.display = 'block';
+    modal.setAttribute('aria-modal', 'true');
+    modal.removeAttribute('aria-hidden');
+    
+    // Fade in effect
+    setTimeout(() => {
+        backdrop.classList.add('show');
+    }, 10);
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    const backdrop = document.getElementById(`backdrop-${modalId}`);
+    
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+            modal.removeAttribute('aria-modal');
+        }, 150);
+    }
+    
+    if (backdrop) {
+        backdrop.classList.remove('show');
+        setTimeout(() => {
+            backdrop.remove();
+        }, 150);
+    }
+    
+    // Clean up body styles
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    
+    // Remove any other lingering backdrops
+    setTimeout(() => {
+        const allBackdrops = document.querySelectorAll('.modal-backdrop');
+        allBackdrops.forEach(bd => bd.remove());
+    }, 200);
+}
+
+// Close modal on ESC key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const openModals = document.querySelectorAll('.modal.show');
+        openModals.forEach(modal => {
+            closeModal(modal.id);
+        });
+    }
+});
+
+// Prevent body scroll when modal is open
+document.addEventListener('DOMContentLoaded', function() {
+    // Clean up any existing backdrops on page load
+    const existingBackdrops = document.querySelectorAll('.modal-backdrop');
+    existingBackdrops.forEach(backdrop => backdrop.remove());
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+});
+</script>
+{% endblock %}

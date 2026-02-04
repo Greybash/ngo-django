@@ -1,0 +1,803 @@
+{% extends 'base.html' %}
+{% block title %}Donate | Evergreen Villages Trust{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: #000;
+        color: #fff;
+    }
+
+    .page-offset {
+        margin-top: 90px;
+    }
+
+    /* Hero Section */
+    .donation-hero {
+        min-height: 50vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.85)), 
+                    url('/static/images/4th.png') center/cover fixed;
+        overflow: hidden;
+    }
+
+    .donation-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 70% 50%, rgba(67, 160, 71, 0.1) 0%, transparent 50%);
+        animation: pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 0.8; }
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Main Container */
+    .donation-container {
+        background: #000;
+        padding: 80px 0;
+    }
+
+    /* Donation Card */
+    .donation-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 30px;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+        padding: 50px 40px;
+    }
+
+    /* Progress Steps */
+    .donation-steps {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 50px;
+        position: relative;
+    }
+
+    .step-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+        flex: 1;
+    }
+
+    .step-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.5);
+        transition: all 0.4s ease;
+        font-size: 1.2rem;
+    }
+
+    .step-item.active .step-circle {
+        background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+        border-color: var(--accent-green);
+        color: white;
+        box-shadow: 0 8px 24px rgba(67, 160, 71, 0.4);
+        transform: scale(1.1);
+    }
+
+    .step-line {
+        position: absolute;
+        top: 30px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 1;
+    }
+
+    .step-item small {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.6);
+        font-weight: 500;
+    }
+
+    .step-item.active small {
+        color: var(--accent-light);
+    }
+
+    /* Section Title */
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        color: var(--accent-light);
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+        font-weight: 700;
+    }
+
+    /* Amount Pills */
+    .amount-pills {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .amount-pill {
+        padding: 18px 24px;
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.8);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-align: center;
+        font-size: 1.1rem;
+    }
+
+    .amount-pill:hover {
+        border-color: var(--accent-green);
+        background: rgba(67, 160, 71, 0.1);
+        transform: translateY(-3px);
+    }
+
+    .amount-pill.active {
+        background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+        color: white;
+        border-color: var(--accent-green);
+        box-shadow: 0 8px 24px rgba(67, 160, 71, 0.4);
+    }
+
+    /* Form Controls */
+    .form-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+    }
+
+    .form-control, .form-select {
+        background: rgba(255, 255, 255, 0.08);
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        padding: 14px 18px;
+        color: #fff;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: var(--accent-green);
+        box-shadow: 0 0 0 4px rgba(67, 160, 71, 0.1);
+        color: #fff;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    .form-select option {
+        background: #1a1a1a;
+        color: #fff;
+    }
+
+    .input-group-text {
+        background: rgba(255, 255, 255, 0.08);
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        border-right: none;
+        color: var(--accent-light);
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    /* Preferences */
+    .preference-card {
+        background: rgba(67, 160, 71, 0.1);
+        border: 2px solid rgba(67, 160, 71, 0.3);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .preference-card:hover {
+        background: rgba(67, 160, 71, 0.15);
+        border-color: rgba(67, 160, 71, 0.5);
+    }
+
+    .form-check-input {
+        width: 22px;
+        height: 22px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.1);
+        margin-top: 0;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--accent-green);
+        border-color: var(--accent-green);
+    }
+
+    .form-check-label {
+        color: rgba(255, 255, 255, 0.9);
+        margin-left: 10px;
+    }
+
+    .form-check-label small {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Buttons */
+    .btn-donate-submit {
+        background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+        border: none;
+        padding: 18px 50px;
+        border-radius: 14px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: white;
+        transition: all 0.4s ease;
+        box-shadow: 0 10px 30px rgba(67, 160, 71, 0.4);
+        letter-spacing: 0.5px;
+    }
+
+    .btn-donate-submit:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 40px rgba(67, 160, 71, 0.5);
+        background: linear-gradient(135deg, #43a047, #66bb6a);
+        color: white;
+    }
+
+    /* Sidebar Cards */
+    .donor-card, .impact-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .donor-card .card-header {
+        background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+        padding: 25px;
+        border: none;
+    }
+
+    .donor-card .card-header h5 {
+        margin: 0;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .donor-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .donor-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .donor-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .donor-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
+    }
+
+    .donor-amount {
+        background: rgba(67, 160, 71, 0.2);
+        color: var(--accent-light);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    /* Impact Card */
+    .impact-card .card-body {
+        padding: 30px;
+    }
+
+    .impact-card h5 {
+        color: var(--accent-light);
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    .impact-item {
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .impact-item:last-child {
+        border-bottom: none;
+    }
+
+    .impact-icon {
+        font-size: 2rem;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(67, 160, 71, 0.15);
+        border-radius: 12px;
+        flex-shrink: 0;
+    }
+
+    .impact-item strong {
+        color: rgba(255, 255, 255, 0.95);
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .impact-item .small {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+        .donation-hero {
+            min-height: 40vh;
+        }
+
+        .donation-card {
+            padding: 30px 20px;
+        }
+
+        .amount-pills {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .donation-steps {
+            font-size: 12px;
+        }
+
+        .step-circle {
+            width: 50px;
+            height: 50px;
+        }
+
+        .btn-donate-submit {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-offset"></div>
+
+<!-- HERO SECTION -->
+<section class="donation-hero">
+    <div class="container text-center">
+        <div class="hero-content" data-aos="fade-up">
+            <div class="hero-badge">
+                <i class="bi bi-heart-fill"></i>
+                <span>MAKE AN IMPACT</span>
+            </div>
+            <h1 class="display-3 fw-bold mb-3">Make a Difference Today</h1>
+            <p class="lead fs-4">Every contribution helps us build sustainable, thriving communities</p>
+        </div>
+    </div>
+</section>
+
+<!-- MAIN DONATION FORM -->
+<div class="donation-container">
+    <div class="container">
+        <div class="row g-4">
+            
+            <!-- Left Column - Form -->
+            <div class="col-lg-8">
+                <div class="donation-card" data-aos="fade-right">
+                    
+                    <!-- Progress Steps -->
+                    <div class="donation-steps">
+                        <div class="step-line"></div>
+                        <div class="step-item active" data-aos="fade-down" data-aos-delay="100">
+                            <div class="step-circle">1</div>
+                            <small>Amount</small>
+                        </div>
+                        <div class="step-item" data-aos="fade-down" data-aos-delay="200">
+                            <div class="step-circle">2</div>
+                            <small>Details</small>
+                        </div>
+                        <div class="step-item" data-aos="fade-down" data-aos-delay="300">
+                            <div class="step-circle">3</div>
+                            <small>Payment</small>
+                        </div>
+                        <div class="step-item" data-aos="fade-down" data-aos-delay="400">
+                            <div class="step-circle">4</div>
+                            <small>Complete</small>
+                        </div>
+                    </div>
+
+                    <form method="post" id="donationForm">
+                        {% csrf_token %}
+                        
+                        <!-- Amount Section -->
+                        <div class="mb-5" data-aos="fade-up">
+                            <h4 class="section-title">Choose Your Contribution</h4>
+                            
+                            <div class="amount-pills">
+                                <button type="button" class="amount-pill" data-amount="500">₹500</button>
+                                <button type="button" class="amount-pill active" data-amount="1000">₹1,000</button>
+                                <button type="button" class="amount-pill" data-amount="2500">₹2,500</button>
+                                <button type="button" class="amount-pill" data-amount="5000">₹5,000</button>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <label class="form-label">Custom Amount</label>
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text">₹</span>
+                                    <input type="number" name="amount" class="form-control" 
+                                           required value="1000" min="100" placeholder="Enter amount">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cause Selection -->
+                        <div class="mb-5" data-aos="fade-up" data-aos-delay="100">
+                            <label class="form-label">Select a Cause</label>
+                            <select name="cause" class="form-select form-select-lg">
+                                <option value="general">General Fund</option>
+                                <option value="education">Education</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="environment">Environment</option>
+                                <option value="poverty">Poverty Alleviation</option>
+                                <option value="women_empowerment">Women Empowerment</option>
+                            </select>
+                        </div>
+
+                        <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 50px 0;">
+
+                        <!-- Personal Information -->
+                        <h4 class="section-title" data-aos="fade-up">Your Information</h4>
+
+                        <div class="row g-3">
+                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
+                                <label class="form-label">First Name</label>
+                                <input type="text" name="first_name" class="form-control" 
+                                       value="{{ user_data.first_name }}" required placeholder="John">
+                            </div>
+                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="150">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" name="last_name" class="form-control" 
+                                       value="{{ user_data.last_name }}" required placeholder="Doe">
+                            </div>
+                        </div>
+
+                        <div class="mb-3 mt-3" data-aos="fade-up" data-aos-delay="200">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email" class="form-control" 
+                                   value="{{ user_data.email }}" required placeholder="john.doe@example.com">
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4" data-aos="fade-up" data-aos-delay="250">
+                               <label class="form-label">Country Code</label>
+
+<select name="country_code" id="countryCodeSelect" class="form-select" onchange="toggleCustomCode()">
+    <option value="">Select Country Code</option>
+
+    <option value="+91" {% if user_data.country_code == '+91' %}selected{% endif %}>IN +91</option>
+    <option value="+1"  {% if user_data.country_code == '+1' %}selected{% endif %}>US +1</option>
+    <option value="+44" {% if user_data.country_code == '+44' %}selected{% endif %}>UK +44</option>
+    <option value="+61" {% if user_data.country_code == '+61' %}selected{% endif %}>AU +61</option>
+
+    <option value="custom" {% if user_data.country_code not in '+91,+1,+44,+61' %}selected{% endif %}>
+        Other (Custom)
+    </option>
+</select>
+
+<input
+    type="text"
+    name="custom_country_code"
+    id="customCountryCode"
+    class="form-control mt-2"
+    placeholder="Enter country code (e.g. +81)"
+    value="{% if user_data.country_code not in '+91,+1,+44,+61' %}{{ user_data.country_code }}{% endif %}"
+    style="display: none;"
+>
+
+                            </div>
+                            <div class="col-md-8" data-aos="fade-up" data-aos-delay="300">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" name="phone" class="form-control" 
+                                       value="{{ user_data.phone }}" required placeholder="9876543210">
+                            </div>
+                        </div>
+
+                        <div class="mb-3" data-aos="fade-up" data-aos-delay="350">
+                            <label class="form-label">Country</label>
+                            <input type="text" name="country" class="form-control" 
+                                   value="{{ user_data.country|default:'India' }}" required>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
+                                <label class="form-label">State</label>
+                                <select name="state" class="form-select" required>
+                                   <option value="">Select State</option>
+
+<!-- States -->
+                            <option {% if user_data.state == 'Andhra Pradesh' %}selected{% endif %}>Andhra Pradesh</option>
+                            <option {% if user_data.state == 'Arunachal Pradesh' %}selected{% endif %}>Arunachal Pradesh</option>
+                            <option {% if user_data.state == 'Assam' %}selected{% endif %}>Assam</option>
+                            <option {% if user_data.state == 'Bihar' %}selected{% endif %}>Bihar</option>
+                            <option {% if user_data.state == 'Chhattisgarh' %}selected{% endif %}>Chhattisgarh</option>
+                            <option {% if user_data.state == 'Goa' %}selected{% endif %}>Goa</option>
+                            <option {% if user_data.state == 'Gujarat' %}selected{% endif %}>Gujarat</option>
+                            <option {% if user_data.state == 'Haryana' %}selected{% endif %}>Haryana</option>
+                            <option {% if user_data.state == 'Himachal Pradesh' %}selected{% endif %}>Himachal Pradesh</option>
+                            <option {% if user_data.state == 'Jharkhand' %}selected{% endif %}>Jharkhand</option>
+                            <option {% if user_data.state == 'Karnataka' %}selected{% endif %}>Karnataka</option>
+                            <option {% if user_data.state == 'Kerala' %}selected{% endif %}>Kerala</option>
+                            <option {% if user_data.state == 'Madhya Pradesh' %}selected{% endif %}>Madhya Pradesh</option>
+                            <option {% if user_data.state == 'Maharashtra' %}selected{% endif %}>Maharashtra</option>
+                            <option {% if user_data.state == 'Manipur' %}selected{% endif %}>Manipur</option>
+                            <option {% if user_data.state == 'Meghalaya' %}selected{% endif %}>Meghalaya</option>
+                            <option {% if user_data.state == 'Mizoram' %}selected{% endif %}>Mizoram</option>
+                            <option {% if user_data.state == 'Nagaland' %}selected{% endif %}>Nagaland</option>
+                            <option {% if user_data.state == 'Odisha' %}selected{% endif %}>Odisha</option>
+                            <option {% if user_data.state == 'Punjab' %}selected{% endif %}>Punjab</option>
+                            <option {% if user_data.state == 'Rajasthan' %}selected{% endif %}>Rajasthan</option>
+                            <option {% if user_data.state == 'Sikkim' %}selected{% endif %}>Sikkim</option>
+                            <option {% if user_data.state == 'Tamil Nadu' %}selected{% endif %}>Tamil Nadu</option>
+                            <option {% if user_data.state == 'Telangana' %}selected{% endif %}>Telangana</option>
+                            <option {% if user_data.state == 'Tripura' %}selected{% endif %}>Tripura</option>
+                            <option {% if user_data.state == 'Uttar Pradesh' %}selected{% endif %}>Uttar Pradesh</option>
+                            <option {% if user_data.state == 'Uttarakhand' %}selected{% endif %}>Uttarakhand</option>
+                            <option {% if user_data.state == 'West Bengal' %}selected{% endif %}>West Bengal</option>
+
+                            <!-- Union Territories -->
+                            <option {% if user_data.state == 'Andaman and Nicobar Islands' %}selected{% endif %}>Andaman and Nicobar Islands</option>
+                            <option {% if user_data.state == 'Chandigarh' %}selected{% endif %}>Chandigarh</option>
+                            <option {% if user_data.state == 'Dadra and Nagar Haveli and Daman and Diu' %}selected{% endif %}>Dadra and Nagar Haveli and Daman and Diu</option>
+                            <option {% if user_data.state == 'Delhi' %}selected{% endif %}>Delhi</option>
+                            <option {% if user_data.state == 'Jammu and Kashmir' %}selected{% endif %}>Jammu and Kashmir</option>
+                            <option {% if user_data.state == 'Ladakh' %}selected{% endif %}>Ladakh</option>
+                            <option {% if user_data.state == 'Lakshadweep' %}selected{% endif %}>Lakshadweep</option>
+                            <option {% if user_data.state == 'Puducherry' %}selected{% endif %}>Puducherry</option>
+                            <!--International -->
+                            <option {% if user_data.state == 'International' %}selected{% endif %}>International</option>
+
+                                </select>
+                            </div>
+                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="450">
+                                <label class="form-label">Pin Code</label>
+                                <input type="text" name="pin_code" class="form-control" 
+                                       value="{{ user_data.pin_code }}" required placeholder="380001" maxlength="6">
+                            </div>
+                        </div>
+
+                        <div class="mb-3" data-aos="fade-up" data-aos-delay="500">
+                            <label class="form-label">City</label>
+                            <input type="text" name="city" class="form-control" 
+                                   value="{{ user_data.city }}" required placeholder="Ahmedabad">
+                        </div>
+
+                        <div class="mb-4" data-aos="fade-up" data-aos-delay="550">
+                            <label class="form-label">Address</label>
+                            <textarea name="address" class="form-control" rows="3" 
+                                      required placeholder="Street address, Locality">{{ user_data.address }}</textarea>
+                        </div>
+
+                        <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 40px 0;">
+
+                        <!-- Privacy & Terms -->
+                        <div data-aos="fade-up">
+                            <div class="preference-card">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="show_name" id="showName" checked>
+                                    <label class="form-check-label" for="showName">
+                                        <strong>Show my name in Top Donors</strong>
+                                        <br>
+                                        <small>Your contribution will be publicly acknowledged</small>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="preference-card">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="taxCheck" required>
+                                    <label class="form-check-label" for="taxCheck">
+                                        <small>I understand this donation is eligible for tax exemption under Section 80G</small>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="preference-card">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                                    <label class="form-check-label" for="termsCheck">
+                                        <small>I agree that donations are non-refundable</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 mt-5" data-aos="fade-up">
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg px-5" 
+                               style="background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); color: #fff; border-radius: 14px;">
+                                <i class="bi bi-arrow-left me-2"></i>Back
+                            </a>
+                            <button type="submit" class="btn btn-donate-submit flex-grow-1">
+                                <i class="bi bi-shield-lock-fill me-2"></i>
+                                Proceed to Payment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column - Sidebar -->
+            <div class="col-lg-4">
+                
+                <!-- Top Donors Card -->
+                <div class="donor-card sticky-top" style="top: 100px;" data-aos="fade-left">
+                    <div class="card-header text-white">
+                        <h5>
+                            <i class="bi bi-trophy-fill"></i>
+                            Top Donors
+                        </h5>
+                    </div>
+                    <div class="card-body" style="padding: 0;">
+                        {% if top_donors %}
+                            {% for donor in top_donors %}
+                            <div class="donor-item">
+                                <div class="donor-info">
+                                    <div class="donor-avatar">{{ donor.name|first }}</div>
+                                    <strong style="color: rgba(255,255,255,0.9);">{{ donor.name }}</strong>
+                                </div>
+                                <span class="donor-amount">₹{{ donor.total_amount|floatformat:0 }}</span>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-5">
+                                <p style="color: rgba(255,255,255,0.5); margin: 0;">Be the first to donate!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Impact Card -->
+                <div class="impact-card mt-4" data-aos="fade-left" data-aos-delay="200">
+                    <div class="card-body">
+                        <h5>Your Impact</h5>
+                        <div class="impact-item">
+                            <div class="impact-icon">
+                                <i class="bi bi-book-fill"></i>
+                            </div>
+                            <div>
+                                <strong>Education</strong>
+                                <p class="small mb-0">Support underprivileged children's education</p>
+                            </div>
+                        </div>
+                        <div class="impact-item">
+                            <div class="impact-icon">
+                                <i class="bi bi-tree-fill"></i>
+                            </div>
+                            <div>
+                                <strong>Environment</strong>
+                                <p class="small mb-0">Plant trees and restore ecosystems</p>
+                            </div>
+                        </div>
+                        <div class="impact-item">
+                            <div class="impact-icon">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div>
+                                <strong>Community</strong>
+                                <p class="small mb-0">Build sustainable villages</p>
+                            </div>
+                        </div>
+                        <div class="impact-item">
+                            <div class="impact-icon">
+                                <i class="bi bi-receipt"></i>
+                            </div>
+                            <div>
+                                <strong>Tax Benefits</strong>
+                                <p class="small mb-0">80G exemption available</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Amount pill interaction
+document.querySelectorAll('.amount-pill').forEach(pill => {
+    pill.addEventListener('click', function() {
+        document.querySelectorAll('.amount-pill').forEach(p => p.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelector('input[name="amount"]').value = this.dataset.amount;
+    });
+});
+
+
+function toggleCustomCode() {
+    const select = document.getElementById("countryCodeSelect");
+    const customInput = document.getElementById("customCountryCode");
+
+    if (select.value === "custom") {
+        customInput.style.display = "block";
+        customInput.required = true;
+    } else {
+        customInput.style.display = "none";
+        customInput.required = false;
+        customInput.value = "";
+    }
+}
+
+// Auto-run on page load (important for edit profile)
+document.addEventListener("DOMContentLoaded", toggleCustomCode);
+
+// Update amount when typing in custom field
+document.querySelector('input[name="amount"]').addEventListener('input', function() {
+    document.querySelectorAll('.amount-pill').forEach(p => p.classList.remove('active'));
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="alert alert-success">
+                <h2>Application Submitted!</h2>
+                <p>Your job application has been submitted successfully. We will review it and contact you soon.</p>
+                <a href="{% url 'jobs' %}" class="btn btn-primary">View More Jobs</a>
+                <a href="{% url 'home' %}" class="btn btn-outline-primary">Back to Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

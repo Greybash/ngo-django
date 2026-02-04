@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Evergreen Villages Trust{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-green: #1b5e20;
+            --primary-green-dark: #0f3d14;
+            --primary-green-light: #2e7d32;
+            --accent-green: #43a047;
+            --accent-light: #a5d6a7;
+            --bg-light: #f8f9f6;
+            --bg-dark: #0f1a14;
+            --text-dark: #1a1a1a;
+            --text-muted: #6c757d;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.12);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.16);
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        /* ===================== NAVBAR ===================== */
+        .navbar {
+            background: rgba(15, 26, 20, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #ffffff;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .navbar-brand::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-light));
+            transition: width 0.4s ease;
+        }
+
+        .navbar-brand:hover::after {
+            width: 100%;
+        }
+
+        .brand-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 50%;
+            background: #ffffff;
+            padding: 4px;
+            box-shadow: 0 4px 16px rgba(67, 160, 71, 0.3);
+            transition: var(--transition-smooth);
+        }
+
+        .navbar-brand:hover .brand-logo {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 6px 24px rgba(67, 160, 71, 0.5);
+        }
+
+        .brand-text {
+            background: linear-gradient(135deg, var(--accent-light) 0%, #ffffff 50%, var(--accent-light) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin-left: 1.5rem;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: var(--transition-smooth);
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-green);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-light) !important;
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .btn-nav-primary {
+            background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            box-shadow: 0 4px 16px rgba(67, 160, 71, 0.3);
+            transition: var(--transition-smooth);
+        }
+
+        .btn-nav-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(67, 160, 71, 0.4);
+            color: white;
+        }
+
+        /* ===================== FOOTER ===================== */
+        footer {
+            background: linear-gradient(135deg, #0a0f0c 0%, #1a1a1a 100%);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 3rem 0 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h5 {
+            color: var(--accent-light);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition-smooth);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent-light);
+            padding-left: 8px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.7);
+            transition: var(--transition-smooth);
+            text-decoration: none;
+        }
+
+        .social-icon:hover {
+            background: var(--accent-green);
+            color: white;
+            transform: translateY(-4px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+
+        /* ===================== UTILITY CLASSES ===================== */
+        .section-padding {
+            padding: 5rem 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-light));
+            border-radius: 2px;
+        }
+
+        .btn-premium {
+            padding: 1rem 2rem;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition-smooth);
+            border: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+            z-index: -1;
+        }
+
+        .btn-premium:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary-gradient {
+            background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+            color: white;
+            box-shadow: 0 8px 24px rgba(67, 160, 71, 0.3);
+        }
+
+        .btn-primary-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(67, 160, 71, 0.4);
+            color: white;
+        }
+
+        .card-premium {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
+            overflow: hidden;
+        }
+
+        .card-premium:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* ===================== ANIMATIONS ===================== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* ===================== RESPONSIVE ===================== */
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background: rgba(15, 26, 20, 0.98);
+                padding: 1.5rem;
+                border-radius: 16px;
+                margin-top: 1rem;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .nav-link {
+                margin-left: 0;
+                padding: 0.75rem 0;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+
+            .brand-logo {
+                width: 40px;
+                height: 40px;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            .section-padding {
+                padding: 3rem 0;
+            }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNavbar">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img src="/static/images/logo.png" alt="Evergreen Villages Trust Logo" class="brand-logo" loading="eager">
+            <span class="brand-text">EverGreen Villages Trust</span>
+        </a>
+
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'what_we_do' %}">What We Do</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'model_village' %}">Model Village</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'donate' %}">Donate</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'volunteer' %}">Volunteer</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'jobs' %}">Jobs</a></li>
+
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown ms-lg-3">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" style="cursor: pointer;">
+                            <i class="bi bi-person-circle me-1"></i>
+                            {{ user.email|truncatewords:1 }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'account_logout' %}">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-nav-primary btn-sm" href="{% url 'login' %}">
+                            <i class="bi bi-person me-1"></i> Login
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- PAGE CONTENT -->
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h5>About Us</h5>
+                <p>Empowering rural communities through sustainable development, education, and environmental restoration.</p>
+                <div class="footer-social">
+                     <a href="https://www.instagram.com/evergreenvillages5?igsh=MW04M3dpZmdpaHM1dg==" class="social-icon"><i class="bi bi-instagram"></i></a>
+                    <a href="https://youtube.com/@evergreenvillages5946?si=ua_BT3Y-2Y7lp6il" class="social-icon"><i class="bi bi-youtube"></i></a>
+                    <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
+                   
+                </div>
+            </div>
+            <div class="footer-section">
+                <h5>Quick Links</h5>
+                <a href="{% url 'what_we_do' %}">What We Do</a>
+                <a href="{% url 'model_village' %}">Model Village</a>
+                <a href="{% url 'volunteer' %}">Volunteer</a>
+                <a href="{% url 'jobs' %}">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h5>Get Involved</h5>
+                <a href="{% url 'donate' %}">Make a Donation</a>
+                <a href="{% url 'volunteer' %}">Become a Volunteer</a>
+                <a href="#">Partner With Us</a>
+            </div>
+            <div class="footer-section">
+                <h5>Contact</h5>
+                <p><i class="bi bi-envelope me-2"></i>evergreenvillagestrust@gmail.com</p>
+                <p><i class="bi bi-phone me-2"></i>+91 8951383562</p>
+                <p><i class="bi bi-geo-alt me-2"></i>V. Mangammalpatti, Madurai District, Tamil Nadu , India-625702 </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Evergreen Villages Trust. All rights reserved. | <a href="#" style="color: var(--accent-light);">Privacy Policy</a> | <a href="#" style="color: var(--accent-light);">Terms of Service</a></p>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+<script>
+    // Initialize AOS
+    AOS.init({
+        duration: 800,
+        once: true,
+        easing: 'ease-out-cubic',
+        offset: 100
+    });
+
+    // Navbar scroll effect
+    const navbar = document.getElementById('mainNavbar');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href !== '#' && document.querySelector(href)) {
+                e.preventDefault();
+                document.querySelector(href).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+</script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

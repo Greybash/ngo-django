@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <style>
+      .gold { fill: #c49a45; }
+      .orange { fill: #e57e25; }
+      .green { fill: #4a933c; }
+    </style>
+  </defs>
+
+  <!-- Base support (hands / community) -->
+  <path class="gold"
+        d="M96 360
+           Q256 460 416 360
+           L392 300
+           Q256 392 120 300 Z"/>
+
+  <!-- Inner support -->
+  <path class="orange"
+        d="M140 300
+           Q256 336 372 300
+           L354 252
+           Q256 288 158 252 Z"/>
+
+  <!-- Trunk -->
+  <path class="gold"
+        d="M276 240
+           L316 128
+           C328 104 360 104 372 128
+           L336 240 Z"/>
+
+  <!-- Leaves / growth -->
+  <path class="green"
+        d="M256 240
+           Q220 120 256 72
+           Q292 120 256 240 Z"/>
+
+  <path class="green"
+        d="M208 260
+           Q128 184 152 132
+           Q228 176 208 260 Z"/>
+
+  <path class="green"
+        d="M304 260
+           Q384 196 360 148
+           Q284 184 304 260 Z"/>
+</svg>

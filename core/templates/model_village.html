@@ -1,0 +1,462 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Model Village | Evergreen Villages Trust{% endblock %}
+
+{% block extra_css %}
+<style>
+body {
+    background: #000;
+    color: #fff;
+}
+
+.page-offset {
+    margin-top: 90px;
+}
+
+.model-section {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 100px 20px;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.model-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    transition: background 0.5s ease;
+}
+
+.model-section:hover::before {
+    background: rgba(0,0,0,0.55);
+}
+
+.model-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 70% 50%, rgba(67, 160, 71, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.model-content {
+    position: relative;
+    max-width: 950px;
+    margin: auto;
+    text-align: center;
+    padding: 60px 50px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(60px);
+    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.model-content.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.model-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 25px;
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-light));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(67, 160, 71, 0.3);
+    transform: scale(0);
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s;
+}
+
+.model-content.visible .model-icon {
+    transform: scale(1);
+}
+
+.model-icon i {
+    font-size: 2.2rem;
+    color: white;
+}
+
+.model-title {
+    font-size: 3.2rem;
+    margin-bottom: 15px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 0%, var(--accent-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease 0.4s;
+}
+
+.model-content.visible .model-title {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.model-subtitle {
+    color: var(--accent-light);
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease 0.5s;
+}
+
+.model-content.visible .model-subtitle {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.model-text {
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: rgba(255, 255, 255, 0.9);
+    text-align: left;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease 0.6s;
+}
+
+.model-content.visible .model-text {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.model-text p {
+    margin-bottom: 20px;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.feature-item {
+    background: rgba(67, 160, 71, 0.15);
+    padding: 15px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(67, 160, 71, 0.3);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    background: rgba(67, 160, 71, 0.25);
+    transform: translateY(-5px);
+}
+
+.feature-item i {
+    color: var(--accent-light);
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    opacity: 0;
+    animation: fadeInBounce 1s ease 1.5s forwards;
+}
+
+.scroll-indicator i {
+    font-size: 2rem;
+    color: rgba(255, 255, 255, 0.6);
+    animation: bounce 2s infinite;
+}
+
+@keyframes fadeInBounce {
+    to { opacity: 1; }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
+}
+
+@media (max-width: 768px) {
+    .model-section {
+        padding: 60px 15px;
+    }
+
+    .model-content {
+        padding: 40px 30px;
+    }
+
+    .model-title {
+        font-size: 2.2rem;
+    }
+
+    .model-text {
+        font-size: 1rem;
+    }
+
+    .model-icon {
+        width: 65px;
+        height: 65px;
+    }
+
+    .model-icon i {
+        font-size: 1.8rem;
+    }
+
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-offset"></div>
+
+<!-- Vision Section -->
+<section class="model-section" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.85)), url('/static/images/111.png') center/cover;">
+    <div class="model-content">
+        <div class="model-icon">
+            <i class="bi bi-eye-fill"></i>
+        </div>
+        <h1 class="model-title">Model Village</h1>
+        <div class="model-subtitle">A Vision for Sustainable Rural Transformation</div>
+        <div class="model-text">
+            <p>
+                Evergreen Villages Trust envisions rural communities where development is holistic,
+                inclusive, and sustainable. The Model Village initiative is a long-term approach
+                that strengthens social systems, economic resilience, cultural identity, and
+                environmental balance.
+            </p>
+            <p>
+                Rather than isolated interventions, this model focuses on building self-reliant
+                communities driven by participation, dignity, and shared responsibility.
+            </p>
+            <p>
+                Beginning with V. Mangammalpatti, this initiative serves as a scalable blueprint
+                for villages across India.
+            </p>
+        </div>
+    </div>
+    <div class="scroll-indicator">
+        <i class="bi bi-chevron-down"></i>
+    </div>
+</section>
+
+<!-- Health Section -->
+<section class="model-section" style="background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.9)), url('/static/images/222.png') center/cover;">
+    <div class="model-content">
+        <div class="model-icon">
+            <i class="bi bi-heart-pulse-fill"></i>
+        </div>
+        <h1 class="model-title">Health & Wellbeing</h1>
+        <div class="model-subtitle">A Foundation for Strong Communities</div>
+        <div class="model-text">
+            <p>
+                Health forms the foundation of a productive and confident village. The Model Village
+                ensures accessible primary healthcare with special attention to women, children,
+                senior citizens, and vulnerable individuals.
+            </p>
+            <p>
+                Preventive care and awareness programs on nutrition, hygiene, and mental wellbeing
+                empower villagers to make informed health choices.
+            </p>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="bi bi-shield-fill-check"></i>
+                    <strong>Preventive Care</strong>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-hospital"></i>
+                    <strong>Mobile Outreach</strong>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-clipboard2-pulse"></i>
+                    <strong>Regular Checkups</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Education Section -->
+<section class="model-section" style="background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.9)), url('/static/images/333.png') center/cover;">
+    <div class="model-content">
+        <div class="model-icon">
+            <i class="bi bi-book-fill"></i>
+        </div>
+        <h1 class="model-title">Education & Youth Engagement</h1>
+        <div class="model-subtitle">Nurturing Future Leaders</div>
+        <div class="model-text">
+            <p>
+                Education in the Model Village goes beyond academics, integrating values, discipline,
+                life skills, and leadership development inspired by the Gurukulam philosophy.
+            </p>
+            <p>
+                Digital learning and skill-based education prepare rural youth for modern
+                opportunities while remaining rooted in their communities.
+            </p>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="bi bi-laptop"></i>
+                    <strong>Digital Learning</strong>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-people-fill"></i>
+                    <strong>Leadership Training</strong>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-gear-fill"></i>
+                    <strong>Skill Development</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Culture Section -->
+<section class="model-section" style="background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.8)), url('/static/images/444.png') center/cover fixed;">
+    <div class="model-content">
+        <div class="model-icon">
+            <i class="bi bi-chat-heart-fill"></i>
+        </div>
+        <h1 class="model-title">Culture & Community Life</h1>
+        <div class="model-subtitle">Preserving Identity and Harmony</div>
+        <div class="model-text">
+            <p>
+                Cultural heritage forms the soul of village life. The Model Village actively
+                preserves traditions, festivals, and local art forms that strengthen community bonds.
+            </p>
+            <p>
+                Shared spaces enable dialogue, learning, and celebration, ensuring inclusive
+                and participatory development.
+            </p>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="bi bi-calendar-event"></i>
+                    <strong>Festivals</strong>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-palette-fill"></i>
+                    <strong>Art & Culture</strong>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-house-heart-fill"></i>
+                    <strong>Community Spaces</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Infrastructure Section -->
+<section class="model-section" style="background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.9)), url('/static/images/555.png') center/cover;">
+    <div class="model-content">
+        <div class="model-icon">
+            <i class="bi bi-building-fill"></i>
+        </div>
+        <h1 class="model-title">Infrastructure & Livelihoods</h1>
+        <div class="model-subtitle">Strengthening Everyday Life</div>
+        <div class="model-text">
+            <p>
+                Sustainable infrastructure enhances quality of life through eco-friendly housing,
+                sanitation systems, renewable energy, and safe roads.
+            </p>
+            <p>
+                Livelihood initiatives create local employment opportunities, reducing migration
+                and strengthening the village economy.
+            </p>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                    <strong>Renewable Energy</strong>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-briefcase-fill"></i>
+                    <strong>Local Employment</strong>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-house-fill"></i>
+                    <strong>Eco Housing</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Environment Section -->
+<section class="model-section" style="background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.8)), url('/static/images/666.png') center/cover fixed;">
+    <div class="model-content">
+        <div class="model-icon">
+            <i class="bi bi-globe-asia-australia"></i>
+        </div>
+        <h1 class="model-title">Environment & Agriculture</h1>
+        <div class="model-subtitle">Living in Harmony with Nature</div>
+        <div class="model-text">
+            <p>
+                Environmental stewardship lies at the heart of the Model Village vision.
+                Sustainable agriculture and agroforestry protect natural resources.
+            </p>
+            <p>
+                Water conservation and soil management ensure long-term resilience against
+                climate challenges.
+            </p>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="bi bi-droplet-fill"></i>
+                    <strong>Water Conservation</strong>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-tree-fill"></i>
+                    <strong>Agroforestry</strong>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-recycle"></i>
+                    <strong>Sustainable Farming</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const sections = document.querySelectorAll(".model-content");
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+            }
+        });
+    }, { threshold: 0.2 });
+
+    sections.forEach(section => observer.observe(section));
+});
+</script>
+
+{% endblock %}

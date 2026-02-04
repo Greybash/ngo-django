@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5" style="margin-top: 90px;">
+    <div class="admin-header" data-aos="fade-down">
+        <div>
+            <h1 class="admin-title">Manage Volunteers</h1>
+            <p class="admin-subtitle">{{ job.title }}</p>
+        </div>
+       
+            
+           
+        </div>
+    </div>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Manage Volunteers</h1>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Interest</th>
+                        <th>Availability</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for volunteer in volunteers %}
+                    <tr>
+                        <td>{{ volunteer.name }}</td>
+                        <td>{{ volunteer.email }}</td>
+                        <td>{{ volunteer.phone }}</td>
+                        <td>{{ volunteer.get_area_of_interest_display }}</td>
+                        <td>{{ volunteer.availability }}</td>
+                        <td>
+                            <span class="badge bg-{% if volunteer.status == 'approved' %}success{% elif volunteer.status == 'pending' %}warning{% else %}danger{% endif %}">
+                                {{ volunteer.status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if volunteer.status == 'pending' %}
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="volunteer_id" value="{{ volunteer.id }}">
+                                <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">Approve</button>
+                                <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">Reject</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

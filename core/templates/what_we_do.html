@@ -1,0 +1,392 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}What We Do | Evergreen Villages Trust{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: #000;
+        color: #fff;
+    }
+
+    .page-offset {
+        margin-top: 90px;
+    }
+
+    .what-section {
+        min-height: 100vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 100px 20px;
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+
+    .what-section::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.65);
+        transition: background 0.5s ease;
+    }
+
+    .what-section:hover::before {
+        background: rgba(0,0,0,0.55);
+    }
+
+    .what-section::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 30% 50%, rgba(67, 160, 71, 0.08) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .what-content {
+        position: relative;
+        max-width: 950px;
+        margin: auto;
+        text-align: center;
+        padding: 60px 50px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        z-index: 2;
+        opacity: 0;
+        transform: translateY(60px);
+        transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .what-content.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .what-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 25px;
+        background: linear-gradient(135deg, var(--accent-green), var(--accent-light));
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 30px rgba(67, 160, 71, 0.3);
+        transform: scale(0);
+        transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s;
+    }
+
+    .what-content.visible .what-icon {
+        transform: scale(1);
+    }
+
+    .what-icon i {
+        font-size: 2.2rem;
+        color: white;
+    }
+
+    .what-title {
+        font-size: 3.2rem;
+        margin-bottom: 15px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ffffff 0%, var(--accent-light) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.8s ease 0.4s;
+    }
+
+    .what-content.visible .what-title {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .what-subtitle {
+        color: var(--accent-light);
+        font-weight: 600;
+        letter-spacing: 2px;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        font-size: 0.95rem;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.8s ease 0.5s;
+    }
+
+    .what-content.visible .what-subtitle {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .what-text {
+        font-size: 1.1rem;
+        line-height: 1.9;
+        color: rgba(255, 255, 255, 0.9);
+        text-align: left;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.8s ease 0.6s;
+    }
+
+    .what-content.visible .what-text {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .what-text p {
+        margin-bottom: 20px;
+    }
+
+    .stats-highlight {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(67, 160, 71, 0.15);
+        padding: 8px 18px;
+        border-radius: 12px;
+        margin: 10px 5px;
+        border: 1px solid rgba(67, 160, 71, 0.3);
+    }
+
+    .stats-highlight i {
+        color: var(--accent-light);
+        font-size: 1.2rem;
+    }
+
+    .scroll-indicator {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+        opacity: 0;
+        animation: fadeInBounce 1s ease 1.5s forwards;
+    }
+
+    .scroll-indicator i {
+        font-size: 2rem;
+        color: rgba(255, 255, 255, 0.6);
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes fadeInBounce {
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(10px);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .what-section {
+            padding: 60px 15px;
+        }
+
+        .what-content {
+            padding: 40px 30px;
+        }
+
+        .what-title {
+            font-size: 2.2rem;
+        }
+
+        .what-text {
+            font-size: 1rem;
+        }
+
+        .what-icon {
+            width: 65px;
+            height: 65px;
+        }
+
+        .what-icon i {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-offset"></div>
+
+<!-- Career Development -->
+<section class="what-section" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.85)), url('/static/images/11st.png') center/cover;">
+    <div class="what-content">
+        <div class="what-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+        <h1 class="what-title">Career Development</h1>
+        <div class="what-subtitle">Youth Empowerment & Skill Building</div>
+        <div class="what-text">
+            <p>
+                Recognizing India's youth as its greatest asset, Evergreen Villages Trust launched a
+                Gurukulam-style human resource development program in 2022. The initiative provides
+                career guidance, skill development training, and counseling to prepare students for
+                meaningful employment.
+            </p>
+            <div style="text-align: center; margin-top: 25px;">
+                <span class="stats-highlight">
+                    <i class="bi bi-award-fill"></i>
+                    <strong>28 Graduates Completed</strong>
+                </span>
+                <span class="stats-highlight">
+                    <i class="bi bi-people-fill"></i>
+                    <strong>30 Student Volunteers</strong>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="scroll-indicator">
+        <i class="bi bi-chevron-down"></i>
+    </div>
+</section>
+
+<!-- Medical Camps -->
+<section class="what-section" style="background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.9)), url('/static/images/22nd.png') center/cover;">
+    <div class="what-content">
+        <div class="what-icon">
+            <i class="bi bi-heart-pulse-fill"></i>
+        </div>
+        <h1 class="what-title">Healthcare Services</h1>
+        <div class="what-subtitle">Free Medical Camps & Community Wellness</div>
+        <div class="what-text">
+            <p>
+                Evergreen Villages Trust organized four free medical camps in V. Mangammalpatti,
+                delivering essential checkups, diagnoses, and treatments to the community.
+                Continuous follow-ups ensured sustained health outcomes and long-term impact.
+            </p>
+            <div style="text-align: center; margin-top: 25px;">
+                <span class="stats-highlight">
+                    <i class="bi bi-hospital-fill"></i>
+                    <strong>4 Medical Camps</strong>
+                </span>
+                <span class="stats-highlight">
+                    <i class="bi bi-person-hearts"></i>
+                    <strong>200+ Villagers Served</strong>
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Youth Mentorship -->
+<section class="what-section" style="background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.9)), url('/static/images/33rd.png') center/cover fixed;">
+    <div class="what-content">
+        <div class="what-icon">
+            <i class="bi bi-lightbulb-fill"></i>
+        </div>
+        <h1 class="what-title">Youth Mentorship</h1>
+        <div class="what-subtitle">Gurukulam-Style Development Program</div>
+        <div class="what-text">
+            <p>
+                A comprehensive mentorship initiative focused on life skills, career readiness,
+                and social responsibility. Participants gained exposure to rural development,
+                community service, and job-ready competencies through hands-on experience and
+                dedicated guidance.
+            </p>
+            <div style="text-align: center; margin-top: 25px;">
+                <span class="stats-highlight">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    <strong>Holistic Development</strong>
+                </span>
+                <span class="stats-highlight">
+                    <i class="bi bi-compass-fill"></i>
+                    <strong>Life Skills Training</strong>
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Anadanam -->
+<section class="what-section" style="background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.8)), url('/static/images/44th.png') center/cover fixed;">
+    <div class="what-content">
+        <div class="what-icon">
+            <i class="bi bi-heart-fill"></i>
+        </div>
+        <h1 class="what-title">Daily Anadanam</h1>
+        <div class="what-subtitle">365 Days of Compassionate Service</div>
+        <div class="what-text">
+            <p>
+                Nutritious meals were served every day of the year to elderly and needy individuals,
+                fostering dignity, compassion, and care while strengthening community bonds. This
+                initiative ensures that no one in our community goes without nourishment.
+            </p>
+            <div style="text-align: center; margin-top: 25px;">
+                <span class="stats-highlight">
+                    <i class="bi bi-calendar-check-fill"></i>
+                    <strong>365 Days Service</strong>
+                </span>
+                <span class="stats-highlight">
+                    <i class="bi bi-emoji-smile-fill"></i>
+                    <strong>Daily Impact</strong>
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Green Plantation -->
+<section class="what-section" style="background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.9)), url('/static/images/55th.png') center/cover fixed;">
+    <div class="what-content">
+        <div class="what-icon">
+            <i class="bi bi-tree-fill"></i>
+        </div>
+        <h1 class="what-title">Green Plantation Drive</h1>
+        <div class="what-subtitle">Ecological Restoration Initiative</div>
+        <div class="what-text">
+            <p>
+                Over 10,000 palm saplings were planted across Tamil Nadu to restore biodiversity,
+                improve groundwater levels, and revive ecological balance through community participation.
+                This initiative creates lasting environmental impact for future generations.
+            </p>
+            <div style="text-align: center; margin-top: 25px;">
+                <span class="stats-highlight">
+                    <i class="bi bi-tree"></i>
+                    <strong>10,000+ Saplings</strong>
+                </span>
+                <span class="stats-highlight">
+                    <i class="bi bi-globe-asia-australia"></i>
+                    <strong>Statewide Impact</strong>
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const sections = document.querySelectorAll(".what-content");
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+            }
+        });
+    }, { threshold: 0.2 });
+
+    sections.forEach(section => observer.observe(section));
+});
+</script>
+
+{% endblock %}

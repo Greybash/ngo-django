@@ -1,0 +1,504 @@
+{% extends 'base.html' %}
+{% block title %}Careers | Evergreen Villages Trust{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: #000;
+        color: #fff;
+    }
+
+    .page-offset {
+        margin-top: 90px;
+    }
+
+    /* Hero Section */
+    .jobs-hero {
+        min-height: 55vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.85)), 
+                    url('/static/images/1st.png') center/cover fixed;
+        overflow: hidden;
+    }
+
+    .jobs-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 70% 50%, rgba(67, 160, 71, 0.1) 0%, transparent 50%);
+        animation: pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 0.8; }
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Why Work Section */
+    .why-work-section {
+        background: #000;
+        padding: 80px 0;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .section-header h2 {
+        font-family: 'Playfair Display', serif;
+        color: var(--accent-light);
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .section-header p {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 1.1rem;
+    }
+
+    .perks-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 40px 30px;
+        border-radius: 24px;
+        text-align: center;
+        transition: all 0.4s ease;
+        height: 100%;
+    }
+
+    .perks-card:hover {
+        transform: translateY(-10px);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(67, 160, 71, 0.3);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+
+    .perks-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 25px;
+        background: linear-gradient(135deg, rgba(67, 160, 71, 0.2), rgba(165, 214, 167, 0.1));
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: var(--accent-light);
+        transition: all 0.4s ease;
+    }
+
+    .perks-card:hover .perks-icon {
+        transform: scale(1.1) rotate(5deg);
+        background: linear-gradient(135deg, var(--accent-green), rgba(165, 214, 167, 0.3));
+    }
+
+    .perks-card h6 {
+        color: var(--accent-light);
+        font-weight: 700;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+    }
+
+    .perks-card .small {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* Job Listings Section */
+    .jobs-listing-section {
+        background: #000;
+        padding: 80px 0;
+    }
+
+    .job-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .job-card:hover {
+        transform: translateY(-10px);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(67, 160, 71, 0.3);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+
+    .job-card-header {
+        padding: 35px;
+        background: linear-gradient(135deg, rgba(67, 160, 71, 0.15), rgba(67, 160, 71, 0.05));
+        border-bottom: 2px solid rgba(67, 160, 71, 0.3);
+    }
+
+    .job-type-badge {
+        display: inline-block;
+        background: var(--accent-green);
+        color: white;
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 20px;
+    }
+
+    .job-title {
+        font-family: 'Playfair Display', serif;
+        color: var(--accent-light);
+        font-weight: 700;
+        margin-bottom: 15px;
+        font-size: 1.6rem;
+    }
+
+    .job-meta {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 14px;
+    }
+
+    .job-meta span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .job-meta i {
+        color: var(--accent-green);
+    }
+
+    .job-card-body {
+        padding: 35px;
+        flex-grow: 1;
+    }
+
+    .job-description {
+        color: rgba(255, 255, 255, 0.75);
+        line-height: 1.7;
+        margin-bottom: 25px;
+    }
+
+    .job-highlights {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .highlight-tag {
+        background: rgba(67, 160, 71, 0.15);
+        color: var(--accent-light);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid rgba(67, 160, 71, 0.3);
+    }
+
+    .job-card-footer {
+        padding: 0 35px 35px;
+    }
+
+    .btn-job-apply {
+        width: 100%;
+        background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+        color: white;
+        border: none;
+        padding: 16px 32px;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: all 0.4s ease;
+        box-shadow: 0 8px 24px rgba(67, 160, 71, 0.3);
+    }
+
+    .btn-job-apply:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 32px rgba(67, 160, 71, 0.5);
+        color: white;
+    }
+
+    /* No Jobs Container */
+    .no-jobs-container {
+        text-align: center;
+        padding: 100px 40px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 30px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .no-jobs-icon {
+        font-size: 80px;
+        margin-bottom: 30px;
+        color: var(--accent-green);
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    .no-jobs-container h3 {
+        font-family: 'Playfair Display', serif;
+        color: var(--accent-light);
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+    }
+
+    .no-jobs-container p {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, rgba(27, 94, 32, 0.9), rgba(27, 94, 32, 0.95)), 
+                    url('/static/images/4th.png') center/cover fixed;
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: pulse 15s ease-in-out infinite;
+    }
+
+    .cta-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+        .jobs-hero {
+            min-height: 40vh;
+        }
+
+        .jobs-hero h1 {
+            font-size: 2rem;
+        }
+
+        .job-card-header,
+        .job-card-body,
+        .job-card-footer {
+            padding: 25px;
+        }
+
+        .job-title {
+            font-size: 1.3rem;
+        }
+
+        .job-meta {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-offset"></div>
+
+<!-- HERO SECTION -->
+<section class="jobs-hero">
+    <div class="container text-center">
+        <div data-aos="fade-up">
+            <div class="hero-badge">
+                <i class="bi bi-briefcase-fill"></i>
+                <span>JOIN OUR MISSION</span>
+            </div>
+            <h1 class="display-3 fw-bold mb-3">Join Our Team</h1>
+            <p class="lead fs-4">Build a career with purpose and impact</p>
+            <p class="mt-3" style="color: rgba(255,255,255,0.8);">Help us create sustainable communities and empower lives across India</p>
+        </div>
+    </div>
+</section>
+
+<!-- WHY WORK WITH US -->
+<section class="why-work-section">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <h2>Why Work With Us?</h2>
+            <p>Be part of something meaningful</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="perks-card">
+                    <div class="perks-icon">
+                        <i class="bi bi-heart-fill"></i>
+                    </div>
+                    <h6>Purposeful Work</h6>
+                    <p class="small">Make a real difference in communities</p>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="perks-card">
+                    <div class="perks-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h6>Growth Opportunities</h6>
+                    <p class="small">Continuous learning and development</p>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="perks-card">
+                    <div class="perks-icon">
+                        <i class="bi bi-tree-fill"></i>
+                    </div>
+                    <h6>Sustainable Mission</h6>
+                    <p class="small">Work towards environmental restoration</p>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+                <div class="perks-card">
+                    <div class="perks-icon">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <h6>Collaborative Culture</h6>
+                    <p class="small">Work with passionate, like-minded people</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- JOB LISTINGS -->
+<section class="jobs-listing-section">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <h2>Open Positions</h2>
+            <p>Find your perfect role and apply today</p>
+        </div>
+
+        {% if jobs %}
+        <div class="row g-4">
+            {% for job in jobs %}
+            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'00' }}">
+                <div class="job-card">
+                    <div class="job-card-header">
+                        <div class="job-type-badge">{{ job.employment_type }}</div>
+                        <h4 class="job-title">{{ job.title }}</h4>
+                        <div class="job-meta">
+                            <span>
+                                <i class="bi bi-geo-alt-fill"></i> {{ job.location }}
+                            </span>
+                            {% if job.salary_range %}
+                            <span>
+                                <i class="bi bi-cash"></i> {{ job.salary_range }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="job-card-body">
+                        <p class="job-description">{{ job.description|truncatewords:30 }}</p>
+                        
+                        <div class="job-highlights">
+                            <span class="highlight-tag">
+                                <i class="bi bi-tree me-1"></i> Environment
+                            </span>
+                            <span class="highlight-tag">
+                                <i class="bi bi-people me-1"></i> Community
+                            </span>
+                            <span class="highlight-tag">
+                                <i class="bi bi-graph-up me-1"></i> Growth
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="job-card-footer">
+                        <a href="{% url 'job_detail' job.id %}" class="btn btn-job-apply">
+                            View Details & Apply
+                            <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-jobs-container" data-aos="fade-up">
+            <div class="no-jobs-icon">
+                <i class="bi bi-briefcase"></i>
+            </div>
+            <h3>No Openings Right Now</h3>
+            <p style="color: rgba(255,255,255,0.6);">We don't have any open positions at the moment, but we're always looking for talented individuals.</p>
+            <p style="color: rgba(255,255,255,0.6);">Send us your resume and we'll keep you in mind for future opportunities!</p>
+            <a href="mailto:careers@evergreen.org" class="btn btn-primary-custom mt-4" 
+               style="background: linear-gradient(135deg, var(--accent-green), #66bb6a); color: white; border: none; padding: 16px 32px; border-radius: 14px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center;">
+                <i class="bi bi-envelope-fill me-2"></i>
+                Send Your Resume
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- CALL TO ACTION -->
+<section class="cta-section">
+    <div class="container text-center">
+        <div class="cta-content" data-aos="fade-up">
+            
+            <h3 class="display-6 mb-4" style="font-family: 'Playfair Display', serif;">Don't See the Right Role?</h3>
+            <p class="lead mb-4">We're always interested in meeting talented people who share our vision</p>
+             <p class="lead mb-4">Join the mission. Plant hope. Serve with purpose.</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="mailto:evergreenvillagestrust@gmail.com" class="btn btn-light btn-lg px-5" 
+                   style="border-radius: 14px; font-weight: 600;">
+                    <i class="bi bi-envelope-fill me-2"></i>
+                    Get in Touch
+                </a>
+                <a href="{% url 'volunteer' %}" class="btn btn-outline-light btn-lg px-5" 
+                   style="border-radius: 14px; font-weight: 600; border: 2px solid white;">
+                    <i class="bi bi-heart-fill me-2"></i>
+                    Volunteer Instead
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

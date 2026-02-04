@@ -8,13 +8,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -------------------------------------------------
 # CORE SETTINGS
 # -------------------------------------------------
-SECRET_KEY = config("SECRET_KEY")
+SECRET_KEY = config(
+    "SECRET_KEY",
+    default="django-insecure-change-me"
+)
+
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
-    default="localhost,127.0.0.1,.railway.app"
+    default="localhost,127.0.0.1,.onrender.com"
 ).split(",")
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.onrender.com",
+]
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # -------------------------------------------------
 # APPLICATIONS
@@ -99,11 +109,11 @@ ACCOUNT_FORMS = {
 }
 
 # -------------------------------------------------
-# DATABASE (Railway PostgreSQL)
+# DATABASE (Render PostgreSQL)
 # -------------------------------------------------
 DATABASES = {
     "default": dj_database_url.config(
-        default=config("DATABASE_URL"),
+        default=os.environ.get("DATABASE_URL"),
         conn_max_age=600,
         ssl_require=True
     )
@@ -136,7 +146,7 @@ STATICFILES_DIRS = [BASE_DIR / 'core/static']
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # -------------------------------------------------
-# MEDIA FILES (TEMP – use Cloudinary later)
+# MEDIA FILES (TEMP)
 # -------------------------------------------------
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

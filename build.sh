@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+set -o errexit
+
+pip install -r requirements.txt
+python manage.py collectstatic --noinput
 set -e
 
 echo "Running migrations..."
@@ -22,3 +26,4 @@ EOF
 
 echo "Starting Gunicorn..."
 exec gunicorn ngo_project.wsgi:application
+
